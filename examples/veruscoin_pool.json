@@ -1,0 +1,122 @@
+﻿{
+    "logging": {
+        "level": "info",
+        "enableConsoleLog": true,
+        "enableConsoleColors": true,
+        "logFile": "",
+        "logBaseDirectory": "",
+        "perPoolLogFile": false
+    },
+    "banning": {
+        "manager": "integrated",
+        "banOnJunkReceive": true,
+        "banOnInvalidShares": false
+    },
+    "notifications": {
+        "enabled": true,
+        "email": {
+            "host": "smtp.example.com",
+            "port": 587,
+            "user": "user",
+            "password": "password",
+            "fromAddress": "info@yourpool.org",
+            "fromName": "support"
+        },
+        "admin": {
+            "enabled": false,
+            "emailAddress": "user@example.com",
+            "notifyBlockFound": true
+        }
+    },
+    "persistence": {
+        "postgres": {
+            "host": "127.0.0.1",
+            "port": 5432,
+            "user": "miningcore",
+            "password": "password",
+            "database": "miningcore"
+        }
+    },
+    "paymentProcessing": {
+        "enabled": true,
+        "interval": 600,
+        "shareRecoveryFile": "recovered-shares.txt"
+    },
+    "pools": [{
+        "id": "vrsc1",
+        "enabled": true,
+        "coin": "veruscoin",
+        "address": "RHux2fYMyxMG4W5F2Va436cANsR47JUvTE",
+        "z-address": "zs1eqnvc3nfd6wz5m65n7ygc9pkqzpx8zwzlz6epx8rvsvdu88k9anapu5gcg8ekq2fzsl3654fzc2",
+        "GBTArgs": {
+            "capabilities": [
+                "coinbasetxn", 
+                "workid",
+                "coinbase/append"
+            ]
+        },
+        "rewardRecipients": [
+            {
+                "type": "op",
+                "address": "RHux2fYMyxMG4W5F2Va436cANsR47JUvTE",
+                "percentage": 1.5
+            }
+        ],
+        "blockRefreshInterval": 0,
+        "jobRebroadcastTimeout": 0,
+        "clientConnectionTimeout": 2400,
+        "banning": {
+            "enabled": true,
+            "time": 600,
+            "invalidPercent": 50,
+            "checkThreshold": 50
+        },
+        "ports": {
+            "3092": {
+                "listenAddress": "0.0.0.0",
+                "difficulty": 256,
+                "varDiff": {
+                    "minDiff": 256,
+                    "maxDiff": 1048576000,
+                    "targetTime": 15,
+                    "retargetTime": 90,
+                    "variancePercent": 30,
+                    "maxDelta": 512
+                }
+            },
+            "3093": {
+                "listenAddress": "0.0.0.0",
+                "difficulty": 256,
+                "tls": true,
+                "tlsPfxFile": "<Your directory for the pfx file>",
+                "tlsPfxPassword": "password",
+                "varDiff": {
+                    "minDiff": 256,
+                    "maxDiff": 1048576000,
+                    "targetTime": 15,
+                    "retargetTime": 90,
+                    "variancePercent": 30,
+                    "maxDelta": 512
+                }
+            }
+        },
+        "daemons": [
+            {
+                "host": "127.0.0.1",
+                "port": 7771,
+                "user": "user",
+                "password": "pass",
+                "ZmqBlockNotifySocket": "tcp://127.0.0.1:7772",
+                "ZmqBlockNotifyTopic": "rawblock"
+            }
+        ],
+        "paymentProcessing": {
+            "enabled": true,
+            "minimumPayment": 1,
+            "payoutScheme": "PPLNS",
+            "payoutSchemeConfig": {
+                "factor": 0.5
+            }
+        }
+    }]
+}

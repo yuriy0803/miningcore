@@ -434,7 +434,7 @@ public class EquihashJob
 
     public string JobId { get; protected set; }
 
-    public (Share Share, string BlockHex) ProcessShare(StratumConnection worker, string extraNonce2, string nTime, string solution)
+    public virtual (Share Share, string BlockHex) ProcessShare(StratumConnection worker, string extraNonce2, string nTime, string solution)
     {
         Contract.RequiresNonNull(worker);
         Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(extraNonce2));
@@ -468,7 +468,7 @@ public class EquihashJob
         return ProcessShareInternal(worker, nonce, nTimeInt, solution);
     }
 
-    public object GetJobParams(bool isNew)
+    public virtual object GetJobParams(bool isNew)
     {
         jobParams[^1] = isNew;
         return jobParams;

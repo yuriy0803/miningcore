@@ -10,6 +10,15 @@ public class EquihashConstants
         System.Numerics.BigInteger.Parse("0007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", NumberStyles.HexNumber);
 }
 
+public class VeruscoinConstants
+{
+    public const int SolutionSlice = 6;
+    public const string HashVersion2b2 = "2b2";
+    public const string HashVersion2b1 = "2b1";
+    public const string HashVersion2b = "2b";
+    public const string HashVersion2 = "2";
+}
+
 public enum ZOperationStatus
 {
     Queued,
@@ -35,4 +44,9 @@ public static class EquihashCommands
 
     public const string ZGetOperationStatus = "z_getoperationstatus";
     public const string ZGetOperationResult = "z_getoperationresult";
+}
+
+public static class VeruscoinCommands
+{
+    public const string SubmitMergedBlock = "submitmergedblock";
 }

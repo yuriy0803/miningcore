@@ -6,3 +6,10 @@ public class EquihashExtraNonceProvider : ExtraNonceProviderBase
     {
     }
 }
+
+public class VeruscoinExtraNonceProvider : ExtraNonceProviderBase
+{
+    public VeruscoinExtraNonceProvider(string poolId, byte? clusterInstanceId) : base(poolId, 4, clusterInstanceId)
+    {
+    }
+}

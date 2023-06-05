@@ -302,6 +302,21 @@
     <ClInclude Include="sha256dt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="minotaur\crypto\insecure_memzero.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minotaur\crypto\sha256.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minotaur\crypto\sysendian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minotaur\crypto\yespower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minotaur\minotaurx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -578,6 +593,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sha256dt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minotaur\crypto\sha256.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minotaur\crypto\yespower.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minotaur\minotaurx.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

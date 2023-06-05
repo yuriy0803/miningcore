@@ -1,0 +1,827 @@
+{
+    "logging": {
+        "level": "debug",
+        "enableConsoleLog": true,
+        "enableConsoleColors": true,
+        "logFile": "miningcore.log",
+        "apiLogFile": "api.log",
+        "logBaseDirectory": "/home/ceedii/miningcore/build/",
+        "perPoolLogFile": true
+    },
+    "banning": {
+        "manager": "Integrated",
+        "banOnJunkReceive": true,
+        "banOnInvalidShares": false
+    },
+    "notifications": {
+        "enabled": false,
+        "email": {
+            "host": "localhost",
+            "port": 25,
+            "user": "",
+            "password": "",
+            "fromAddress": "noreply@mining-pool.cedric-crispin.local",
+            "fromName": "[Mining Pool - Cedric CRISPIN - Developpement]"
+        },
+        "admin": {
+            "enabled": false,
+            "emailAddress": "cedric.crispin@gmail.com",
+            "notifyBlockFound": true
+        }
+    },
+    "persistence": {
+        "postgres": {
+            "host": "127.0.0.1",
+            "port": 5432,
+            "user": "mining_pool_cedric_crispin_com",
+            "password": "hzFWPsCJ9crp9Jwqfgds3NkwhRCPcrrfNxc",
+            "database": "mining_pool_cedric_crispin_com",
+            "commandTimeout": 600
+        }
+    },
+    "equihashMaxThreads": 2,
+    "paymentProcessing": {
+        "enabled": true,
+        "interval": 600,
+        "shareRecoveryFile": "recovered-shares.txt"
+    },
+    "api": {
+        "enabled": true,
+        "listenAddress": "0.0.0.0",
+        "port": 4000,
+        "metricsIpWhitelist": [],
+        "rateLimiting": {
+            "disabled": false,
+            "rules": [
+                {
+                    "Endpoint": "*",
+                    "Period": "1s",
+                    "Limit": 30
+                }
+            ],
+            "ipWhitelist": ["192.168.1.7"]
+        }
+    },
+    "pools": [
+        {
+            "id": "vtc1",
+            "enabled": false,
+            "coin": "vertcoin",
+            "vertHashDataFile": "/home/ceedii/.vertcoin/testnet3/verthash.dat",
+            "address": "X1n3Gf4QHwM8XLbE63iRJo3HcWzE34bjmk",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "X1n3Gf4QHwM8XLbE63iRJo3HcWzE34bjmk",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 250,
+            "jobRebroadcastTimeout": 3,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3334": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.0005,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.0005,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3335": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.0005,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.0005,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 15888,
+                    "user": "vtc1qsjurynfa3uzsw2wctuhn4kzzh27adv3c5zg0wu",
+                    "password": "98bct78hKopZYxWZVWRcbtb85IKB6yxN9H6qAH_09oU="
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 1,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "xmr1",
+            "enabled": false,
+            "coin": "monero",
+            "randomXRealm": "xmr1",
+            "randomXVmCount": 1,
+            "randomXFlagsAdd": "RANDOMX_FLAG_FULL_MEM",
+            "address": "9w2B8t5aGdKCZTaGsUFre32FA7Z3hz2X2KzUvA3mVmoZFCK3HzaFQjEK9wMm1LAtR2378jij9uAPjM4UChux3GuZFd3aGqu",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "9w2B8t5aGdKCZTaGsUFre32FA7Z3hz2X2KzUvA3mVmoZFCK3HzaFQjEK9wMm1LAtR2378jij9uAPjM4UChux3GuZFd3aGqu",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 250,
+            "jobRebroadcastTimeout": 3,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3344": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 7500,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 1000,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3345": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 7500,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 1000,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 28081,
+                    "user": null,
+                    "password": null
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 28083,
+                    "user": null,
+                    "password": null,
+                    "category": "wallet"
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 0.001,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "erg1",
+            "enabled": false,
+            "coin": "ergo",
+            "address": "3WzFWwWi6E7TvnXvZEeNUTaieTx4PUckVPhnL6PED5wjr8vWSdo9",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "3WzFWwWi6E7TvnXvZEeNUTaieTx4PUckVPhnL6PED5wjr8vWSdo9",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 250,
+            "jobRebroadcastTimeout": 3,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3354": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 1,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 1,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3355": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 1,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 1,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 9052,
+                    "user": null,
+                    "password": null,
+                    "apiKey": "TXfjTjjH7L9bthrHdtx3xmpNnxNCNgNJ9Hv"
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "walletPassword": "z=f?!3!-wx^tWrF!fHjX",
+                "minimumPayment": 0.01,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "ccx1",
+            "enabled": false,
+            "coin": "conceal",
+            "networkTypeOverride": "testnet",
+            "cryptonightMaxThreads": 1,
+            "address": "ccx7BRXk4eubahkPNe4mmZ1PYwigPmqGT5ciBWib39aQQjWctY6vzA7RuBBkcoSKxEVBQArdvJi5YhEHRY29sSpS9EiD5c2nW5",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "ccx7BRXk4eubahkPNe4mmZ1PYwigPmqGT5ciBWib39aQQjWctY6vzA7RuBBkcoSKxEVBQArdvJi5YhEHRY29sSpS9EiD5c2nW5",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 250,
+            "jobRebroadcastTimeout": 3,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3364": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 5000,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 2500,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3365": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 5000,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 2500,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 16600,
+                    "user": null,
+                    "password": null
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 8770,
+                    "user": null,
+                    "password": null,
+                    "category": "wallet"
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 0.1,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "rxd1",
+            "enabled": false,
+            "coin": "radiant",
+            "address": "ms4rYFqGfot5gz9hZ6FYNaGnYiFh3sXVCT",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "ms4rYFqGfot5gz9hZ6FYNaGnYiFh3sXVCT",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 250,
+            "jobRebroadcastTimeout": 3,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3374": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.5,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.5,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3375": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.5,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.5,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 17332,
+                    "user": "ms4rYFqGfot5gz9hZ6FYNaGnYiFh3sXVCT",
+                    "password": "qT-CvLnXDmOSw5sckZghZG0ezX7-Oz3jKUW33hVvP6A="
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 1,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "ubq1",
+            "enabled": false,
+            "coin": "ubiq",
+            "address": "0x6101Ee22AB2cd3907E5CA0b70EF12A2afE842A56",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "0x6101Ee22AB2cd3907E5CA0b70EF12A2afE842A56",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 120,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3384": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.1,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.1,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3385": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.1,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.1,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "chainTypeOverride": "Ubiq",
+            "dagDir": "/home/ceedii/.ubqhash/",
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 8588,
+                    "portWs": 8589,
+                    "user": "",
+                    "password": ""
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 0.001,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                },
+                "gas": 21000,
+                "maxFeePerGas": 80000000000,
+                "BlockSearchOffset": 100,
+                "keepUncles": false,
+                "keepTransactionFees": false
+            }
+        },
+        {
+            "id": "etc1",
+            "enabled": false,
+            "coin": "ethereumclassic",
+            "address": "0x421Afb2ce225D3A2d3DD6e63Fe57E124B40e20Af",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "0x421Afb2ce225D3A2d3DD6e63Fe57E124B40e20Af",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 120,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "3394": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.1,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.1,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "3395": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.1,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.1,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "chainTypeOverride": "Mordor",
+            "dagDir": "/home/ceedii/.etchash/",
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 8545,
+                    "portWs": 8546,
+                    "user": "",
+                    "password": ""
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 0.001,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                },
+                "gas": 21000,
+                "maxFeePerGas": 50000000000,
+                "BlockSearchOffset": 100,
+                "keepUncles": false,
+                "keepTransactionFees": false
+            }
+        },
+        {
+            "id": "plsr1",
+            "enabled": false,
+            "coin": "pulsar",
+            "address": "PKeqLKLnPv7ZWmuBxnjHp9G9b4S3wZQZoN",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "PKeqLKLnPv7ZWmuBxnjHp9G9b4S3wZQZoN",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 120,
+            "jobRebroadcastTimeout": 3,
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "4004": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.0001,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.0001,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "4005": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 0.0001,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 0.0001,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 5996,
+                    "user": "PKeqLKLnPv7ZWmuBxnjHp9G9b4S3wZQZoN",
+                    "password": "kP1-W4R8dt7xU6UWr4ns1w45CSoFQUfjhQj0IIuEJ60="
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 0.001,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "beam1",
+            "enabled": false,
+            "coin": "beam",
+            "maxActiveJobs": 4,
+            "address": "2b53f3e23bd471de6b502575f6ef6f65fee55ac85baed63f307324f9cf78d0c4ebe",
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "2b53f3e23bd471de6b502575f6ef6f65fee55ac85baed63f307324f9cf78d0c4ebe",
+                    "percentage": 0.1
+                }
+            ],
+            "clientConnectionTimeout": 600,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "4014": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 700,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 200,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                },
+                "4015": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 700,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 200,
+                        "maxDiff": null,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 500
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 11001,
+                    "user": null,
+                    "password": null,
+                    "apiKey": "4Nsmr4xftwXpWcg"
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 10000,
+                    "user": null,
+                    "password": null,
+                    "category": "wallet"
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 10002,
+                    "user": null,
+                    "password": null,
+                    "category": "explorer"
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 1,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        },
+        {
+            "id": "vrsc1",
+            "enabled": true,
+            "coin": "veruscoin",
+            "address": "RGk5aoCpv9Yqajnf7HDwdDUgPhRVvVGBVe",
+            "z-address": "zs1eqnvc3nfd6wz5m65n7ygc9pkqzpx8zwzlz6epx8rvsvdu88k9anapu5gcg8ekq2fzsl3654fzc2",
+            "GBTArgs": [{
+                "capabilities": [
+                    "coinbasetxn", 
+                    "workid",
+                    "coinbase/append"
+                ]
+            }],
+            "rewardRecipients": [
+                {
+                    "type": "op",
+                    "address": "RGk5aoCpv9Yqajnf7HDwdDUgPhRVvVGBVe",
+                    "percentage": 0.1
+                }
+            ],
+            "blockRefreshInterval": 0,
+            "jobRebroadcastTimeout": 0,
+            "clientConnectionTimeout": 2400,
+            "banning": {
+                "enabled": true,
+                "time": 600,
+                "invalidPercent": 50,
+                "checkThreshold": 50
+            },
+            "ports": {
+                "4024": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 256,
+                    "tls": false,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 256,
+                        "maxDiff": 1048576000,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 512
+                    }
+                },
+                "4025": {
+                    "listenAddress": "0.0.0.0",
+                    "difficulty": 256,
+                    "tls": true,
+                    "tlsPfxFile": "/etc/apache2/ssl/www.cedric-crispin.local.pfx",
+                    "tlsPfxPassword": "f`k+4b4{Fbr?++?{`@M[",
+                    "varDiff": {
+                        "minDiff": 256,
+                        "maxDiff": 1048576000,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30,
+                        "maxDelta": 512
+                    }
+                }
+            },
+            "daemons": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 17771,
+                    "user": "RGk5aoCpv9Yqajnf7HDwdDUgPhRVvVGBVe",
+                    "password": "qsnrdbq7KdWwNctKq7jkbjmvftPnXbTRjqn",
+                    "ZmqBlockNotifySocket": "tcp://127.0.0.1:17772",
+                    "ZmqBlockNotifyTopic": "rawblock"
+                }
+            ],
+            "paymentProcessing": {
+                "enabled": true,
+                "minimumPayment": 0.0001,
+                "payoutScheme": "PPLNS",
+                "payoutSchemeConfig": {
+                    "factor": 0.5
+                }
+            }
+        }
+    ]
+}

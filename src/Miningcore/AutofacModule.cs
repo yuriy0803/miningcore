@@ -2,6 +2,7 @@ using System.Reflection;
 using Autofac;
 using Miningcore.Api;
 using Miningcore.Banning;
+using Miningcore.Blockchain.Beam;
 using Miningcore.Blockchain.Bitcoin;
 using Miningcore.Blockchain.Conceal;
 using Miningcore.Blockchain.Cryptonote;
@@ -143,12 +144,17 @@ public class AutofacModule : Module
         builder.RegisterType<PROPPaymentScheme>()
             .Keyed<IPayoutScheme>(PayoutScheme.PROP)
             .SingleInstance();
+        
+        //////////////////////
+        // Beam
 
+        builder.RegisterType<BeamJobManager>();
+        
         //////////////////////
         // Bitcoin and family
 
         builder.RegisterType<BitcoinJobManager>();
-        
+
         //////////////////////
         // Conceal
 

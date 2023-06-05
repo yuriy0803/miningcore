@@ -150,4 +150,7 @@ public static unsafe class Multihash
 
     [DllImport("libmultihash", EntryPoint = "sha256dt_export", CallingConvention = CallingConvention.Cdecl)]
     public static extern void sha256dt(byte* input, void* output);
+    
+    [DllImport("libmultihash", EntryPoint = "minotaurx_export", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void minotaurx(byte* input, void* output);
 }

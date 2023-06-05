@@ -263,6 +263,11 @@
     <ClInclude Include="x21s.h" />
     <ClInclude Include="x22i.h" />
     <ClInclude Include="sha512_256.h" />
+    <ClInclude Include="minotaur\crypto\insecure_memzero.h" />
+    <ClInclude Include="minotaur\crypto\sha256.h" />
+    <ClInclude Include="minotaur\crypto\sysendian.h" />
+    <ClInclude Include="minotaur\crypto\yespower.h" />
+    <ClInclude Include="minotaur\minotaurx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bcrypt.c" />
@@ -359,6 +364,9 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
     </ClCompile>
     <ClCompile Include="sha512_256.c" />
+    <ClCompile Include="minotaur\crypto\sha256.c" />
+    <ClCompile Include="minotaur\crypto\yespower.c" />
+    <ClCompile Include="minotaur\minotaurx.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="equi\crypto\equihash.tcc" />

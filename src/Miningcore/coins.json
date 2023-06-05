@@ -2169,7 +2169,6 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
-        "hasSmartNodes": true,
         "foundersRewardAddress": [
             "RTtyQU6DoSuNWetT4WUem5qXP5jNYGpwat"
         ],
@@ -2247,6 +2246,28 @@
       "explorerTxLink": "https://explorer.novochain.ovh/tx/{0}",
       "explorerAccountLink": "https://explorer.novochain.ovh/address/{0}"
     },
+    "pulsar": {
+        "name": "Pulsar",
+        "symbol": "PLSR",
+        "family": "bitcoin",
+        "website": "https://pulsarcoin.org/",
+        "market": "https://www.coingecko.com/en/coins/pulsar-coin",
+        "twitter": "https://www.twitter.com/PulsarCoin",
+        "discord": "https://discord.gg/7feEVsvDj9",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "minotaurx"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [ { "hash": "minotaurx" } ]
+        },
+        "explorerBlockLink": "https://explorer.pulsarcoin.org/block/$height$",
+        "explorerTxLink": "https://explorer.pulsarcoin.org/tx/{0}",
+        "explorerAccountLink": "https://explorer.pulsarcoin.org/address/{0}"
+    },
     "bitoreum": {
         "name": "Bitoreum",
         "canonicalName": "Bitoreum",
@@ -2272,7 +2293,6 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
-        "hasSmartNodes": true,
         "foundersRewardAddress": [
             "BanxgMPcMpXnuWQ2ogfQqEkwwVtjhAhXBR"
         ],
@@ -2770,7 +2790,6 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
-        "hasSmartNodes": true,
         "shareMultiplier": 65536,
         "explorerBlockLink": "http://rtm.timyg.org:6950/block/$height$",
         "explorerTxLink": "http://rtm.timyg.org:6950/tx/{0}",
@@ -3359,7 +3378,6 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
-        "hasSmartNodes": true,
         "shareMultiplier": 65536,
         "explorerBlockLink": "https://explorer.yerbas.org/block/$height$",
         "explorerTxLink": "https://explorer.yerbas.org/tx/{0}",
@@ -3732,7 +3750,7 @@
                 "overwinterActivationHeight": 1,
                 "overwinterTxVersion": 3,
                 "overwinterTxVersionGroupId": 63210096,
-                "saplingActivationHeight": 1,
+                "saplingActivationHeight": 227520,
                 "saplingTxVersion": 4,
                 "saplingTxVersionGroupId": 2301567109
             },
@@ -3749,7 +3767,13 @@
                     ]
                 },
                 "coinbaseTxNetwork": "testnet",
-                "payFoundersReward": false
+                "payFoundersReward": false,
+                "overwinterActivationHeight": 1,
+                "overwinterTxVersion": 3,
+                "overwinterTxVersionGroupId": 63210096,
+                "saplingActivationHeight": 120,
+                "saplingTxVersion": 4,
+                "saplingTxVersionGroupId": 2301567109
             },
             "regtest": {
                 "diff1": "0007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -3758,8 +3782,8 @@
                 "solver": {
                     "hash": "equihash",
                     "args": [
-                        200,
-                        9,
+                        48,
+                        5,
                         "Verushash"
                     ]
                 },
@@ -4218,6 +4242,19 @@
         "explorerBlockLink": "http://explorer.zensystem.io/block/$hash$",
         "explorerTxLink": "http://explorer.zensystem.io/transactions/{0}",
         "explorerAccountLink": "http://explorer.zensystem.io/accounts/{0}"
+    },
+    "beam": {
+        "name": "Beam",
+        "canonicalName": "Beam",
+        "symbol": "BEAM",
+        "family": "beam",
+        "website": "https://beam.mw/",
+        "market": "",
+        "twitter": "https://twitter.com/beamprivacy",
+        "telegram": "https://t.me/BeamPrivacy",
+        "discord": "http://discord.gg/BHZvAhg",
+        "explorerBlockLink": "https://explorer.beam.mw/block/$hash$",
+        "explorerTxLink": "https://explorer.beam.mw/?searched_by={0}"
     },
     "monero": {
         "name": "Monero",
