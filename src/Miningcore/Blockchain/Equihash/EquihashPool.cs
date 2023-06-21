@@ -74,7 +74,7 @@ public class EquihashPool : PoolBase
 
     protected override async Task SetupJobManager(CancellationToken ct)
     {
-        manager = ctx.Resolve<EquihashJobManager>(new TypedParameter(typeof(IExtraNonceProvider), new EquihashExtraNonceProvider(poolConfig.Id, clusterConfig.InstanceId)));
+        manager = createEquihashExtraNonceProvider();
 
         manager.Configure(poolConfig, clusterConfig);
 

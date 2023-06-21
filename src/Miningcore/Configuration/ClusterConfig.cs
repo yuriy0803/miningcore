@@ -36,6 +36,9 @@ public enum CoinFamily
 
     [EnumMember(Value = "ergo")]
     Ergo,
+    
+    [EnumMember(Value = "progpow")]
+    Progpow,
 }
 
 public abstract partial class CoinTemplate
@@ -140,6 +143,7 @@ public abstract partial class CoinTemplate
         {CoinFamily.Cryptonote, typeof(CryptonoteCoinTemplate)},
         {CoinFamily.Ethereum, typeof(EthereumCoinTemplate)},
         {CoinFamily.Ergo, typeof(ErgoCoinTemplate)},
+        {CoinFamily.Progpow, typeof(ProgpowTemplate)},
     };
 }
 
@@ -586,10 +590,23 @@ public partial class EthereumCoinTemplate : CoinTemplate
     [DefaultValue(EthereumSubfamily.None)]
     [JsonConverter(typeof(StringEnumConverter), true)]
     public EthereumSubfamily Subfamily { get; set; }
+    
+    /// <summary>
+    /// Which hashing algorithm to use. (ethash, etchash or ubqhash)
+    /// </summary>
+    public string Ethasher { get; set; } = "ethash";
 }
 
 public partial class ErgoCoinTemplate : CoinTemplate
 {
+}
+
+public partial class ProgpowTemplate : BitcoinTemplate
+{
+    /// <summary>
+    /// Which hashing algorithm to use. (kawpow or firopow)
+    /// </summary>
+    public string Progpower { get; set; } = "kawpow";
 }
 
 #endregion // Coin Definitions

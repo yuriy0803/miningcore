@@ -665,38 +665,14 @@ public class CryptonoteJobManager : JobManagerBase<CryptonoteJob>
                 logger.Info(() => $"Subscribing to ZMQ push-updates from {string.Join(", ", zmq.Values)}");
 
                 var blockNotify = rpc.ZmqSubscribe(logger, ct, zmq)
-                    .Where(msg =>
-                    {
-                        bool result = false;
-
-                        try
-                        {
-                            var text = Encoding.UTF8.GetString(msg[0].Read());
-
-                            result = text.StartsWith("json-minimal-chain_main:");
-                        }
-
-                        catch
-                        {
-                        }
-
-                        if(!result)
-                            msg.Dispose();
-
-                        return result;
-                    })
                     .Select(msg =>
                     {
                         using(msg)
                         {
-                            var token = GetFrameAsJToken(msg[0].Read());
-
-                            if (token != null)
-                                return token.Value<long>("first_height").ToString(CultureInfo.InvariantCulture);
-
                             // We just take the second frame's raw data and turn it into a hex string.
                             // If that string changes, we got an update (DistinctUntilChanged)
-                            return msg[0].Read().ToHexString();
+                            var result = msg[0].Read().ToHexString();
+                            return result;
                         }
                     })
                     .DistinctUntilChanged()

@@ -53,6 +53,9 @@
                 "coinbasetxn", 
                 "workid",
                 "coinbase/append"
+            ],
+            "rules": [
+                "segwit"
             ]
         },
         "rewardRecipients": [
@@ -106,8 +109,8 @@
                 "port": 7771,
                 "user": "user",
                 "password": "pass",
-                "ZmqBlockNotifySocket": "tcp://127.0.0.1:7772",
-                "ZmqBlockNotifyTopic": "rawblock"
+                "zmqBlockNotifySocket": "tcp://127.0.0.1:7772",
+                "zmqBlockNotifyTopic": "hashblock"
             }
         ],
         "paymentProcessing": {

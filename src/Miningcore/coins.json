@@ -2228,6 +2228,66 @@
         "explorerTxLink": "https://explorer.radiantblockchain.org/tx/{0}",
         "explorerAccountLink": "https://explorer.radiantblockchain.org/address/{0}"
     },
+    "ravencoin": {
+        "name": "Ravencoin",
+        "symbol": "RVN",
+        "family": "progpow",
+        "website": "https://ravencoin.org/",
+        "market": "https://coinmarketcap.com/currencies/ravencoin/",
+        "twitter": "https://twitter.com/Ravencoin",
+        "telegram": "https://t.me/RavencoinDev",
+        "discord": "https://discordapp.com/invite/jn6uhur",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://ravencoin.network/rvn/block/$hash$",
+        "explorerTxLink": "https://ravencoin.network/rvn/transaction/{0}",
+        "explorerAccountLink": "https://ravencoin.network/rvn/address/{0}"
+    },
+        "firo": {
+        "name": "Firo",
+        "symbol": "FIRO",
+        "family": "progpow",
+        "website": "https://firo.org/",
+        "market": "https://coinmarketcap.com/currencies/firo/",
+        "twitter": "https://twitter.com/firoorg",
+        "telegram": "https://t.me/firoorg",
+        "discord": "https://discord.gg/TGZPRbRT3Y",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasFounderFee": true,
+        "hasMasterNodes": true,
+        "shareMultiplier": 1,
+        "progpower": "firopow",
+        "explorerBlockLink": "https://explorer.firo.org/block/$hash$",
+        "explorerTxLink": "https://explorer.firo.org/tx/{0}",
+        "explorerAccountLink": "https://explorer.firo.org/address/{0}"
+    },
     "novo": {
       "name": "Novo",
       "symbol": "NOVO",
@@ -4317,7 +4377,8 @@
             "uncle": "https://explorer.callisto.network/blocks/$height$"
         },
         "explorerTxLink": "https://explorer.callisto.network/tx/{0}",
-        "explorerAccountLink": "https://explorer.callisto.network/address/{0}"
+        "explorerAccountLink": "https://explorer.callisto.network/address/{0}",
+        "ethasher": "ethash"
     },
     "ethereum": {
         "name": "Ethereum",
@@ -4334,7 +4395,8 @@
             "uncle": "https://etherscan.io/uncle/$height$"
         },
         "explorerTxLink": "https://etherscan.io/tx/{0}",
-        "explorerAccountLink": "https://etherscan.io/address/{0}"
+        "explorerAccountLink": "https://etherscan.io/address/{0}",
+        "ethasher": "ethash"
     },
     "ethereumclassic": {
         "name": "Ethereum Classic",
@@ -4351,7 +4413,8 @@
             "uncle": "https://blockscout.com/etc/mainnet/block/$height$"
         },
         "explorerTxLink": "https://blockscout.com/etc/mainnet/tx/{0}",
-        "explorerAccountLink": "https://blockscout.com/etc/mainnet/address/{0}"
+        "explorerAccountLink": "https://blockscout.com/etc/mainnet/address/{0}",
+        "ethasher": "etchash"
     },
     "ethereum-pow": {
         "name": "EthereumPoW",
@@ -4368,7 +4431,8 @@
             "uncle": "https://www.oklink.com/en/ethw/uncle/$height$"
         },
         "explorerTxLink": "https://www.oklink.com/en/ethw/tx/{0}",
-        "explorerAccountLink": "https://www.oklink.com/en/ethw/address/{0}"
+        "explorerAccountLink": "https://www.oklink.com/en/ethw/address/{0}",
+        "ethasher": "ethash"
     },
     "etherone": {
         "name": "EtherOne",
@@ -4385,7 +4449,8 @@
             "uncle": "https://blockscout.etherone.one/uncles/$height$"
         },
         "explorerTxLink": "https://blockscout.etherone.one/tx/{0}",
-        "explorerAccountLink": "https://blockscout.etherone.one/address/{0}"
+        "explorerAccountLink": "https://blockscout.etherone.one/address/{0}",
+        "ethasher": "ethash"
     },
     "pinkchain": {
         "name": "PinkChain",
@@ -4402,7 +4467,8 @@
             "uncle": "https://pinkscan.org/uncle/$height$"
         },
         "explorerTxLink": "https://pinkscan.org/tx/{0}",
-        "explorerAccountLink": "https://pinkscan.org/address/{0}"
+        "explorerAccountLink": "https://pinkscan.org/address/{0}",
+        "ethasher": "ethash"
     },
     "ubiq": {
         "name": "Ubiq",
@@ -4419,7 +4485,8 @@
             "uncle": "https://ubiqscan.io/uncle/$height$"
         },
         "explorerTxLink": "https://ubiqscan.io/tx/{0}",
-        "explorerAccountLink": "https://ubiqscan.io/address/{0}"
+        "explorerAccountLink": "https://ubiqscan.io/address/{0}",
+        "ethasher": "ubqhash"
     },
     "ergo": {
         "name": "Ergo",
