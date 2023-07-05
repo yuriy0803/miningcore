@@ -63,6 +63,33 @@ public class EthOneConstants
     public const decimal BaseRewardInitial = 2.0m;
 }
 
+// OCTA block reward distribution - 
+// https://docs.octa.space/cryptocurrency/monetary-policy
+public class OctaSpaceConstants
+{
+    public const ulong TriangulumHardForkHeight = 10000000;
+    public const decimal TriangulumBlockReward = 1.0m;
+    public const ulong VegaHardForkHeight = 8000000;
+    public const decimal VegaBlockReward = 1.1m;
+    public const ulong BlackeyeHardForkHeight = 6000000;
+    public const decimal BlackeyeBlockReward = 1.2m;
+    public const ulong DneprHardForkHeight = 4000000;
+    public const decimal DneprBlockReward = 1.85m;
+    public const ulong MahasimHardForkHeight = 3000000;
+    public const decimal MahasimBlockReward = 2.3m;
+    public const ulong PolarisHardForkHeight = 2500000;
+    public const decimal PolarisBlockReward = 2.8m;
+    public const ulong SpringwaterHardForkHeight = 2000000;
+    public const decimal SpringwaterBlockReward = 3.0m;
+    public const ulong ZagamiHardForkHeight = 1500000;
+    public const decimal ZagamiBlockReward = 3.5m;
+    public const ulong OldenburgHardForkHeight = 1000000;
+    public const decimal OldenburgBlockReward = 4.0m;
+    public const ulong ArcturusHardForkHeight = 650000;
+    public const decimal ArcturusBlockReward = 5.0m;
+    public const decimal BaseRewardInitial = 6.5m;
+}
+
 public class PinkConstants
 {
     public const decimal BaseRewardInitial = 1.0m;
@@ -96,6 +123,8 @@ public enum EthereumNetworkType
     MainPow = 10001,
     EtherOne = 4949,
     Pink = 10100,
+    OctaSpace = 800001,
+    OctaSpaceTestnet = 800002,
 
     Unknown = -1,
 }
@@ -111,6 +140,8 @@ public enum GethChainType
     MainPow = 10001,
     EtherOne = 4949,
     Pink = 10100,
+    OctaSpace,
+    OctaSpaceTestnet,
     
     Unknown = -1,
 }

@@ -197,6 +197,9 @@ public partial class BitcoinTemplate : CoinTemplate
 
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public bool HasMasterNodes { get; set; }
+    
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public bool HasSmartNodes { get; set; }
 
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public bool HasBrokenSendMany { get; set; } = false;

@@ -152,4 +152,17 @@ public class BlockRepository : IBlockRepository
             before
         }));
     }
+    
+    public async Task<uint> GetPoolDuplicateBlockAfterCountByPoolHeightNoTypeAndStatusAsync(IDbConnection con, string poolId, long height, BlockStatus[] status, DateTime after)
+    {
+        const string query = @"SELECT COUNT(id) FROM blocks WHERE poolid = @poolId AND blockheight = @height AND status = ANY(@status) AND created > @after";
+        
+        return await con.ExecuteScalarAsync<uint>(new CommandDefinition(query, new
+        {
+            poolId,
+            height,
+            status = status.Select(x => x.ToString().ToLower()).ToArray(),
+            after
+        }));
+    }
 }

@@ -49,7 +49,7 @@ public class BeamJob
         BigInteger solutionHashValue = new BigInteger(solutionHash, true, true);
         
         // calc share-diff
-        var shareDiff = (double) BigInteger.Divide(BeamConstants.BigMaxValue, solutionHashValue);
+        var shareDiff = (double) new BigRational(BeamConstants.BigMaxValue, solutionHashValue);
         var stratumDifficulty = context.Difficulty;
         var ratio = shareDiff / stratumDifficulty;
         

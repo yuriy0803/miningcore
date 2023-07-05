@@ -4,11 +4,12 @@
     "enableConsoleLog": true,
     "enableConsoleColors": true,
     "logFile": "",
+    "apiLogFile": "",
     "logBaseDirectory": "",
     "perPoolLogFile": false
   },
   "banning": {
-    "manager": "integrated",
+    "manager": "Integrated",
     "banOnJunkReceive": true,
     "banOnInvalidShares": false
   },

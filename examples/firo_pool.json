@@ -4,16 +4,17 @@
         "enableConsoleLog": true,
         "enableConsoleColors": true,
         "logFile": "",
+        "apiLogFile": "",
         "logBaseDirectory": "",
         "perPoolLogFile": false
     },
     "banning": {
-        "manager": "integrated",
+        "manager": "Integrated",
         "banOnJunkReceive": true,
         "banOnInvalidShares": false
     },
     "notifications": {
-        "enabled": true,
+        "enabled": false,
         "email": {
             "host": "smtp.example.com",
             "port": 587,
@@ -77,9 +78,9 @@
         "ports": {
             "3094": {
                 "listenAddress": "0.0.0.0",
-                "difficulty": 0.1,
+                "difficulty": 1,
                 "varDiff": {
-                    "minDiff": 0.1,
+                    "minDiff": 0.125,
                     "maxDiff": null,
                     "targetTime": 15,
                     "retargetTime": 90,
@@ -89,12 +90,12 @@
             },
             "3095": {
                 "listenAddress": "0.0.0.0",
-                "difficulty": 0.1,
+                "difficulty": 1,
                 "tls": true,
                 "tlsPfxFile": "<Your directory for the pfx file>",
                 "tlsPfxPassword": "password",
                 "varDiff": {
-                    "minDiff": 0.1,
+                    "minDiff": 0.125,
                     "maxDiff": null,
                     "targetTime": 15,
                     "retargetTime": 90,

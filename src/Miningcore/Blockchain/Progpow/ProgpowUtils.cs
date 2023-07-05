@@ -1,5 +1,5 @@
-using Miningcore.Extensions;
-using Org.BouncyCastle.Math;
+using System.Globalization;
+using System.Numerics;
 
 namespace Miningcore.Blockchain.Progpow;
 
@@ -7,45 +7,57 @@ public static class ProgpowUtils
 {
     public static string FiroEncodeTarget(double difficulty)
     {
-        string result;
-        var diff = BigInteger.ValueOf((long) (difficulty * 255d));
-        var quotient = FiroConstants.Diff1B.Divide(diff).Multiply(BigInteger.ValueOf(255));
-        var bytes = quotient.ToByteArray().AsSpan();
-        Span<byte> padded = stackalloc byte[FiroConstants.TargetPaddingLength];
+        difficulty = 1.0 / difficulty;
 
-        var padLength = FiroConstants.TargetPaddingLength - bytes.Length;
+        BigInteger NewTarget;
+        BigInteger DecimalDiff;
+        BigInteger DecimalTarget;
 
-        if(padLength > 0)
+        NewTarget = BigInteger.Multiply(FiroConstants.Diff1B, new BigInteger(difficulty));
+
+        string StringDiff = difficulty.ToString(CultureInfo.InvariantCulture);
+        int DecimalOffset = StringDiff.IndexOf(".");
+        if(DecimalOffset > -1)
         {
-            bytes.CopyTo(padded.Slice(padLength, bytes.Length));
-            result = padded.ToHexString(0, FiroConstants.TargetPaddingLength);
+            int Precision = (StringDiff.Length - 1) - DecimalOffset;
+            DecimalDiff = BigInteger.Parse(StringDiff.Substring(DecimalOffset + 1));
+            DecimalTarget = BigInteger.Multiply(FiroConstants.Diff1B, DecimalDiff);
+
+            string s = DecimalTarget.ToString();
+            s = s.Substring(0, s.Length - Precision);
+
+            DecimalTarget = BigInteger.Parse(s);
+            NewTarget += DecimalTarget;
         }
 
-        else
-            result = bytes.ToHexString(0, FiroConstants.TargetPaddingLength);
-
-        return result;
+        return string.Format("{0:x64}", NewTarget);
     }
     
     public static string RavencoinEncodeTarget(double difficulty)
     {
-        string result;
-        var diff = BigInteger.ValueOf((long) (difficulty * 255d));
-        var quotient = RavencoinConstants.Diff1B.Divide(diff).Multiply(BigInteger.ValueOf(255));
-        var bytes = quotient.ToByteArray().AsSpan();
-        Span<byte> padded = stackalloc byte[RavencoinConstants.TargetPaddingLength];
+        difficulty = 1.0 / difficulty;
 
-        var padLength = RavencoinConstants.TargetPaddingLength - bytes.Length;
+        BigInteger NewTarget;
+        BigInteger DecimalDiff;
+        BigInteger DecimalTarget;
 
-        if(padLength > 0)
+        NewTarget = BigInteger.Multiply(RavencoinConstants.Diff1B, new BigInteger(difficulty));
+
+        string StringDiff = difficulty.ToString(CultureInfo.InvariantCulture);
+        int DecimalOffset = StringDiff.IndexOf(".");
+        if(DecimalOffset > -1)
         {
-            bytes.CopyTo(padded.Slice(padLength, bytes.Length));
-            result = padded.ToHexString(0, RavencoinConstants.TargetPaddingLength);
+            int Precision = (StringDiff.Length - 1) - DecimalOffset;
+            DecimalDiff = BigInteger.Parse(StringDiff.Substring(DecimalOffset + 1));
+            DecimalTarget = BigInteger.Multiply(RavencoinConstants.Diff1B, DecimalDiff);
+
+            string s = DecimalTarget.ToString();
+            s = s.Substring(0, s.Length - Precision);
+
+            DecimalTarget = BigInteger.Parse(s);
+            NewTarget += DecimalTarget;
         }
 
-        else
-            result = bytes.ToHexString(0, RavencoinConstants.TargetPaddingLength);
-
-        return result;
+        return string.Format("{0:x64}", NewTarget);
     }
 }

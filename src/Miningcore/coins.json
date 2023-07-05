@@ -2169,6 +2169,7 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
+        "hasSmartNodes": true,
         "foundersRewardAddress": [
             "RTtyQU6DoSuNWetT4WUem5qXP5jNYGpwat"
         ],
@@ -2353,6 +2354,7 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
+        "hasSmartNodes": true,
         "foundersRewardAddress": [
             "BanxgMPcMpXnuWQ2ogfQqEkwwVtjhAhXBR"
         ],
@@ -2850,6 +2852,7 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
+        "hasSmartNodes": true,
         "shareMultiplier": 65536,
         "explorerBlockLink": "http://rtm.timyg.org:6950/block/$height$",
         "explorerTxLink": "http://rtm.timyg.org:6950/tx/{0}",
@@ -3438,6 +3441,7 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
+        "hasSmartNodes": true,
         "shareMultiplier": 65536,
         "explorerBlockLink": "https://explorer.yerbas.org/block/$height$",
         "explorerTxLink": "https://explorer.yerbas.org/tx/{0}",
@@ -3787,11 +3791,11 @@
         "name": "Veruscoin",
         "symbol": "VRSC",
         "family": "equihash",
-        "website": "",
-        "market": "",
-        "twitter": "",
-        "telegram": "",
-        "discord": "",
+        "website": "https://verus.io/",
+        "market": "https://coinmarketcap.com/currencies/veruscoin/",
+        "twitter": "https://twitter.com/veruscoin",
+        "telegram": "https://t.me/veruscommunity",
+        "discord": "https://discord.com/invite/VRKMP2S",
         "networks": {
             "main": {
                 "diff1": "00000f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
@@ -4450,6 +4454,24 @@
         },
         "explorerTxLink": "https://blockscout.etherone.one/tx/{0}",
         "explorerAccountLink": "https://blockscout.etherone.one/address/{0}",
+        "ethasher": "ethash"
+    },
+        "octaspace": {
+        "name": "OctaSpace",
+        "canonicalName": "Octa.Space",
+        "symbol": "OCTA",
+        "family": "ethereum",
+        "website": "https://octa.space/",
+        "market": "https://coinmarketcap.com/currencies/octaspace/",
+        "twitter": "https://twitter.com/octa_space",
+        "telegram": "https://t.me/octa_space",
+        "discord": "https://discord.gg/octaspace",
+        "explorerBlockLinks": {
+            "block": "https://explorer.octa.space/block/$height$",
+            "uncle": "https://explorer.octa.space/block/$height$"
+        },
+        "explorerTxLink": "https://explorer.octa.space/tx/{0}",
+        "explorerAccountLink": "https://explorer.octa.space/address/{0}",
         "ethasher": "ethash"
     },
     "pinkchain": {
