@@ -48,7 +48,7 @@
         "enabled": true,
         "coin": "ravencoin",
         "address": "mxR4ic4Q32giqfcYqQGxDteGhzkjgA2eX6",
-        "GBTArgs": {
+        "GBTArgs": [{
             "capabilities": [
                 "coinbasetxn", 
                 "workid",
@@ -57,7 +57,7 @@
             "rules": [
                 "segwit"
             ]
-        },
+        }],
         "rewardRecipients": [
             {
                 "type": "op",

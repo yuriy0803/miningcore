@@ -48,7 +48,7 @@
         "enabled": true,
         "coin": "firo",
         "address": "aFkp9i2yxNyRW17uX4XLDStnPoguwJ6tuL",
-        "GBTArgs": {
+        "GBTArgs": [{
             "capabilities": [
                 "coinbasetxn", 
                 "workid",
@@ -57,7 +57,7 @@
             "rules": [
                 "segwit"
             ]
-        },
+        }],
         "rewardRecipients": [
             {
                 "type": "op",
