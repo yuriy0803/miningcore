@@ -48,7 +48,6 @@
         "enabled": true,
         "coin": "veruscoin",
         "address": "RHux2fYMyxMG4W5F2Va436cANsR47JUvTE",
-        "z-address": "zs1eqnvc3nfd6wz5m65n7ygc9pkqzpx8zwzlz6epx8rvsvdu88k9anapu5gcg8ekq2fzsl3654fzc2",
         "GBTArgs": [{
             "capabilities": [
                 "coinbasetxn", 

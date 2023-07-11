@@ -3855,8 +3855,8 @@
                 "payFoundersReward": false
             }
         },
-        "usesZCashAddressFormat": true,
-        "useBitcoinPayoutHandler": false,
+        "usesZCashAddressFormat": false,
+        "useBitcoinPayoutHandler": true,
         "explorerBlockLink": "https://explorer.veruscoin.io/block/$height$",
         "explorerTxLink": "https://explorer.veruscoin.io/tx/{0}",
         "explorerAccountLink": "https://explorer.veruscoin.io/address/{0}"
@@ -4495,7 +4495,7 @@
     "ubiq": {
         "name": "Ubiq",
         "canonicalName": "Ubiq",
-        "symbol": "UBIQ",
+        "symbol": "UBQ",
         "family": "ethereum",
         "website": "https://ubiqsmart.com/",
         "market": "",
