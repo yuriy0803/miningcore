@@ -27,6 +27,18 @@ public abstract partial class CoinTemplate
     public string Source { get; set; }
 }
 
+public partial class AlephiumCoinTemplate
+{
+    #region Overrides of CoinTemplate
+
+    public override string GetAlgorithmName()
+    {
+        return "Blake3";
+    }
+
+    #endregion
+}
+
 public partial class BeamCoinTemplate
 {
     #region Overrides of CoinTemplate
@@ -153,8 +165,14 @@ public partial class EquihashCoinTemplate
 
     public override string GetAlgorithmName()
     {
-        // TODO: return variant
-        return "Equihash";
+        switch(Symbol)
+        {
+            case "VRSC":
+                return "Verushash";
+            default:
+                // TODO: return variant
+                return "Equihash";
+        }
     }
 
     #endregion
@@ -232,11 +250,11 @@ public partial class ErgoCoinTemplate
     #endregion
 }
 
-public partial class ProgpowTemplate
+public partial class ProgpowCoinTemplate
 {
     #region Overrides of CoinTemplate
     
-    public ProgpowTemplate() : base()
+    public ProgpowCoinTemplate() : base()
     {
         progpowLightValue = new Lazy<IProgpowLight>(() =>
             ProgpowFactory.GetProgpow(ComponentContext, Progpower));

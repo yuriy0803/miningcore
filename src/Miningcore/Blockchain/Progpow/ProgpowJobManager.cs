@@ -28,7 +28,7 @@ public class ProgpowJobManager : BitcoinJobManagerBase<ProgpowJob>
     {
     }
 
-    private ProgpowTemplate coin;
+    private ProgpowCoinTemplate coin;
 
     private async Task<RpcResponse<BlockTemplate>> GetBlockTemplateAsync(CancellationToken ct)
     {
@@ -190,7 +190,7 @@ public class ProgpowJobManager : BitcoinJobManagerBase<ProgpowJob>
 
     public override void Configure(PoolConfig pc, ClusterConfig cc)
     {
-        coin = pc.Template.As<ProgpowTemplate>();
+        coin = pc.Template.As<ProgpowCoinTemplate>();
         extraPoolConfig = pc.Extra.SafeExtensionDataAs<BitcoinPoolConfigExtra>();
         extraPoolPaymentProcessingConfig = pc.PaymentProcessing?.Extra?.SafeExtensionDataAs<BitcoinPoolPaymentProcessingConfigExtra>();
 

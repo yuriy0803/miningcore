@@ -188,7 +188,7 @@ public class ProgpowJob : BitcoinJob
         Contract.RequiresNonNull(progpowHasher);
         Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(jobId));
 
-        this.coin = pc.Template.As<ProgpowTemplate>();
+        this.coin = pc.Template.As<ProgpowCoinTemplate>();
         this.txVersion = coin.CoinbaseTxVersion;
         this.network = network;
         this.clock = clock;

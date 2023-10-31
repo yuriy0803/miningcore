@@ -58,6 +58,8 @@ public class BeamPool : PoolBase
         var password = !string.IsNullOrEmpty(request?.Password) ? request.Password : null;
         var passParts = password?.Split(PasswordControlVarsSeparator);
 
+        context.UserAgent = request?.UserAgent;
+
         // extract worker/miner
         var split = workerValue?.Split('.');
         var minerName = split?.FirstOrDefault()?.Trim();
@@ -100,22 +102,14 @@ public class BeamPool : PoolBase
                 logger.Info(() => $"[{connection.ConnectionId}] Setting static difficulty of {staticDiff.Value}");
             }
             
-            var data = new object[]
-            {
-                connection.ConnectionId,
-            }
-            .Concat(manager.GetSubscriberData(connection))
-            .ToArray();
-            
             // setup worker context
             context.IsSubscribed = true;
-            context.UserAgent = request?.UserAgent;
             
             // response
             var loginResponse = new BeamLoginResponse {
                 Code = BeamConstants.BeamRpcLoginSuccess,
                 Description = "Login successful",
-                Nonceprefix = connection.ConnectionId,
+                Nonceprefix = manager.GetSubscriberData(connection),
                 Forkheight = manager?.Forkheight,
                 Forkheight2 = manager?.Forkheight2
             };
@@ -134,7 +128,8 @@ public class BeamPool : PoolBase
                 Id = (string) currentJobParams[0],
                 Height = (ulong) currentJobParams[1],
                 Difficulty = BeamUtils.PackedDifficulty(connection.Context.Difficulty),
-                Input = (string) currentJobParams[4]
+                Input = (string) currentJobParams[4],
+                Nonceprefix = context.ExtraNonce1
             };
             
             // respond
@@ -367,7 +362,8 @@ public class BeamPool : PoolBase
                 Id = (string) currentJobParams[0],
                 Height = (ulong) currentJobParams[1],
                 Difficulty = BeamUtils.PackedDifficulty(context.Difficulty),
-                Input = (string) currentJobParams[4]
+                Input = (string) currentJobParams[4],
+                Nonceprefix = context.ExtraNonce1
             };
             
             // respond
@@ -469,13 +465,15 @@ public class BeamPool : PoolBase
         if(connection.Context.ApplyPendingDifficulty())
         {
             var currentJobParams = manager.GetJobParamsForStratum();
+            var context = connection.ContextAs<BeamWorkerContext>();
             
             // response
             var jobResponse = new BeamJobResponse {
                 Id = (string) currentJobParams[0],
                 Height = (ulong) currentJobParams[1],
-                Difficulty = BeamUtils.PackedDifficulty(connection.Context.Difficulty),
-                Input = (string) currentJobParams[4]
+                Difficulty = BeamUtils.PackedDifficulty(context.Difficulty),
+                Input = (string) currentJobParams[4],
+                Nonceprefix = context.ExtraNonce1
             };
             
             // respond

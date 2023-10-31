@@ -121,6 +121,7 @@ public class EquihashPool : PoolBase
             throw new StratumException(StratumError.MinusOne, "missing request id");
 
         var requestParams = request.ParamsAs<string[]>();
+        context.UserAgent = requestParams.FirstOrDefault()?.Trim();
 
         var data = new object[]
         {
@@ -129,11 +130,21 @@ public class EquihashPool : PoolBase
         .Concat(manager.GetSubscriberData(connection))
         .ToArray();
 
-        await connection.RespondAsync(data, request.Id);
+        // Nicehash's stupid validator insists on "error" property present
+        // in successful responses which is a violation of the JSON-RPC spec
+        // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+        var response = new JsonRpcResponse<object[]>(data, request.Id);
+
+        if(context.IsNicehash)
+        {
+            response.Extra = new Dictionary<string, object>();
+            response.Extra["error"] = null;
+        }
+
+        await connection.RespondAsync(response);
 
         // setup worker context
         context.IsSubscribed = true;
-        context.UserAgent = requestParams.FirstOrDefault()?.Trim();
     }
 
     protected async Task OnAuthorizeAsync(StratumConnection connection, Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
@@ -161,8 +172,19 @@ public class EquihashPool : PoolBase
 
         if(context.IsAuthorized)
         {
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+            var response = new JsonRpcResponse<object>(context.IsAuthorized, request.Id);
+
+            if(context.IsNicehash)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+            
             // respond
-            await connection.RespondAsync(context.IsAuthorized, request.Id);
+            await connection.RespondAsync(response);
 
             // log association
             logger.Info(() => $"[{connection.ConnectionId}] Authorized worker {workerValue}");
@@ -252,7 +274,19 @@ public class EquihashPool : PoolBase
 
             // submit
             var share = await manager.SubmitShareAsync(connection, requestParams, ct);
-            await connection.RespondAsync(true, request.Id);
+            
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+            var response = new JsonRpcResponse<object>(true, request.Id);
+
+            if(context.IsNicehash)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+            
+            await connection.RespondAsync(response);
 
             // publish
             messageBus.SendMessage(share);

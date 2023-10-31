@@ -16,6 +16,9 @@ public class BeamJobResponse : BeamResponseBase
     [JsonProperty("input")]
     public string Input { get; set; }
     
+    [JsonProperty("nonceprefix", NullValueHandling = NullValueHandling.Ignore)]
+    public string Nonceprefix { get; set; } = null;
+    
     [JsonProperty("method")]
     public string Method { get; set; } = "job";
 }
