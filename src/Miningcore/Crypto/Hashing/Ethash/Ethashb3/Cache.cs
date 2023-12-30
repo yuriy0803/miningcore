@@ -84,13 +84,13 @@ public class Cache : IEthashCache
                             return;
                         
                         var started = DateTime.Now;
-                        var block = Epoch * RethereumConstants.EpochLength;
+                        var block = Epoch * HypraConstants.EpochLength;
 
                         // Full DAG
                         if(!string.IsNullOrEmpty(dagDir))
                         {
                             logger.Debug(() => $"Generating DAG for epoch {Epoch}");
-                            logger.Debug(() => $"Epoch length used: {RethereumConstants.EpochLength}");
+                            logger.Debug(() => $"Epoch length used: {HypraConstants.EpochLength}");
 
                             // Generate a temporary cache
                             var light = EthHashB3.ethash_light_new(block);

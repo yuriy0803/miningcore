@@ -39,7 +39,13 @@ public enum CoinFamily
 
     [EnumMember(Value = "ethereum")]
     Ethereum,
-    
+        
+    [EnumMember(Value = "kaspa")]
+    Kaspa,
+
+    [EnumMember(Value = "nexa")]
+    Nexa,
+
     [EnumMember(Value = "progpow")]
     Progpow,
 }
@@ -147,6 +153,8 @@ public abstract partial class CoinTemplate
         {CoinFamily.Equihash, typeof(EquihashCoinTemplate)},
         {CoinFamily.Ergo, typeof(ErgoCoinTemplate)},
         {CoinFamily.Ethereum, typeof(EthereumCoinTemplate)},
+        {CoinFamily.Kaspa, typeof(KaspaCoinTemplate)},
+        {CoinFamily.Nexa, typeof(BitcoinTemplate)},
         {CoinFamily.Progpow, typeof(ProgpowCoinTemplate)},
     };
 }
@@ -245,6 +253,18 @@ public partial class BitcoinTemplate : CoinTemplate
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string BlockSerializer { get; set; }
+
+    /// <summary>
+    /// Force the use of the raw public key of the specified poolAddress
+    /// </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public bool ForcePoolAddressDestinationWithPubKey { get; set; }
+
+    /// <summary>
+    /// Amount of decimals used for payouts
+    /// </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public int? PayoutDecimalPlaces { get; set; } = 4;
 }
 
 public enum ConcealSubfamily
@@ -268,10 +288,16 @@ public partial class ConcealCoinTemplate : CoinTemplate
     public CryptonightHashType Hash { get; set; }
 
     /// <summary>
-    /// Set to 0 for automatic selection from blobtemplate
+    /// Broader Cryptonight hash variant
     /// </summary>
     [JsonProperty(Order = -4, DefaultValueHandling = DefaultValueHandling.Include)]
     public int HashVariant { get; set; }
+    
+    /// <summary>
+    /// Blob type in order to build the correct blob from blobtemplate
+    /// </summary>
+    [JsonProperty(Order = -4, DefaultValueHandling = DefaultValueHandling.Include)]
+    public int BlobType { get; set; }
     
     /// <summary>
     /// Conceal network hashrate = `Difficulty / DifficultyTarget`
@@ -415,10 +441,16 @@ public partial class CryptonoteCoinTemplate : CoinTemplate
     public CryptonightHashType Hash { get; set; }
 
     /// <summary>
-    /// Set to 0 for automatic selection from blobtemplate
+    /// Broader Cryptonight hash variant
     /// </summary>
     [JsonProperty(Order = -4, DefaultValueHandling = DefaultValueHandling.Include)]
     public int HashVariant { get; set; }
+    
+    /// <summary>
+    /// Blob type in order to build the correct blob from blobtemplate
+    /// </summary>
+    [JsonProperty(Order = -4, DefaultValueHandling = DefaultValueHandling.Include)]
+    public int BlobType { get; set; }
 
     /// <summary>
     /// Smallest unit for Blockreward formatting
@@ -613,6 +645,10 @@ public partial class EthereumCoinTemplate : CoinTemplate
     /// Which hashing algorithm to use. (ethash, etchash, ubqhash or ethashb3)
     /// </summary>
     public string Ethasher { get; set; } = "ethash";
+}
+
+public partial class KaspaCoinTemplate : CoinTemplate
+{
 }
 
 public partial class ProgpowCoinTemplate : BitcoinTemplate

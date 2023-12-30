@@ -76,6 +76,24 @@ public class BlockRepository : IBlockRepository
             .ToArray();
     }
 
+    public async Task<Block[]> PageMinerBlocksAsync(IDbConnection con, string poolId, string address, BlockStatus[] status,
+        int page, int pageSize, CancellationToken ct)
+    {
+        const string query = @"SELECT * FROM blocks WHERE poolid = @poolid AND status = ANY(@status) AND miner = @address
+            ORDER BY created DESC OFFSET @offset FETCH NEXT @pageSize ROWS ONLY";
+
+        return (await con.QueryAsync<Entities.Block>(new CommandDefinition(query, new
+        {
+            poolId,
+	    address,
+            status = status.Select(x => x.ToString().ToLower()).ToArray(),
+            offset = page * pageSize,
+            pageSize
+        }, cancellationToken: ct)))
+            .Select(mapper.Map<Block>)
+            .ToArray();
+    }
+
     public async Task<Block[]> GetPendingBlocksForPoolAsync(IDbConnection con, string poolId)
     {
         const string query = @"SELECT * FROM blocks WHERE poolid = @poolid AND status = @status";
@@ -117,6 +135,13 @@ public class BlockRepository : IBlockRepository
         const string query = @"SELECT COUNT(*) FROM blocks WHERE poolid = @poolId";
 
         return con.ExecuteScalarAsync<uint>(new CommandDefinition(query, new { poolId }, cancellationToken: ct));
+    }
+    
+    public Task<uint> GetMinerBlockCountAsync(IDbConnection con, string poolId, string address, CancellationToken ct)
+    {
+        const string query = @"SELECT COUNT(*) FROM blocks WHERE poolid = @poolId AND miner = @address";
+
+        return con.ExecuteScalarAsync<uint>(new CommandDefinition(query, new { poolId, address }, cancellationToken: ct));
     }
 
     public Task<DateTime?> GetLastPoolBlockTimeAsync(IDbConnection con, string poolId)

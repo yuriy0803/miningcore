@@ -214,6 +214,18 @@ public partial class CryptonoteCoinTemplate
     #endregion
 }
 
+public partial class ErgoCoinTemplate
+{
+    #region Overrides of CoinTemplate
+
+    public override string GetAlgorithmName()
+    {
+        return "Autolykos";
+    }
+
+    #endregion
+}
+
 public partial class EthereumCoinTemplate
 {
     #region Overrides of CoinTemplate
@@ -238,13 +250,22 @@ public partial class EthereumCoinTemplate
     #endregion
 }
 
-public partial class ErgoCoinTemplate
+public partial class KaspaCoinTemplate
 {
     #region Overrides of CoinTemplate
 
     public override string GetAlgorithmName()
     {
-        return "Autolykos";
+        switch(Symbol)
+        {
+            case "KLS":
+                return "Karlsenhash";
+            case "PYI":
+                return "Pyrinhash";
+            default:
+                // TODO: return variant
+                return "kHeavyHash";
+        }
     }
 
     #endregion

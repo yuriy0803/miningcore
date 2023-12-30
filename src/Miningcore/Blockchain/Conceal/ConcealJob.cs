@@ -26,6 +26,7 @@ public class ConcealJob
         PrevHash = prevHash;
 
         hashFunc = hashFuncs[coin.Hash];
+        blobType = coin.BlobType;
     }
 
     protected delegate void HashFunc(ReadOnlySpan<byte> data, Span<byte> result, ulong height);
@@ -39,6 +40,7 @@ public class ConcealJob
     private byte[] blobTemplate;
     private int extraNonce;
     private readonly HashFunc hashFunc;
+    private readonly int blobType;
 
     private void PrepareBlobTemplate(byte[] instanceId)
     {
@@ -57,7 +59,7 @@ public class ConcealJob
         var bytes = BitConverter.GetBytes(workerExtraNonce.ToBigEndian());
         bytes.CopyTo(blob[BlockTemplate.ReservedOffset..]);
 
-        return CryptonoteBindings.ConvertBlob(blob, blobTemplate.Length).ToHexString();
+        return CryptonoteBindings.ConvertBlob(blob, blobTemplate.Length, blobType).ToHexString();
     }
 
     private string EncodeTarget(double difficulty, int size = 4)
@@ -130,7 +132,7 @@ public class ConcealJob
         bytes.CopyTo(blob[ConcealConstants.BlobNonceOffset..]);
 
         // convert
-        var blobConverted = CryptonoteBindings.ConvertBlob(blob, blobTemplate.Length);
+        var blobConverted = CryptonoteBindings.ConvertBlob(blob, blobTemplate.Length, blobType);
         if(blobConverted == null)
             throw new StratumException(StratumError.MinusOne, "malformed blob");
 

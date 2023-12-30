@@ -49,6 +49,7 @@ public abstract class BitcoinJobManagerBase<TJob> : JobManagerBase<TJob>
     protected DateTime? lastJobRebroadcast;
     protected bool hasSubmitBlockMethod;
     protected bool isPoS;
+    protected bool forcePoolAddressDestinationWithPubKey;
     protected TimeSpan jobRebroadcastTimeout;
     protected Network network;
     protected IDestination poolAddressDestination;
@@ -464,7 +465,7 @@ public abstract class BitcoinJobManagerBase<TJob> : JobManagerBase<TJob>
 
         // chain detection
         if(!hasLegacyDaemon)
-            network = Network.GetNetwork(blockchainInfoResponse.Chain.ToLower());
+            network = (blockchainInfoResponse.Chain.ToLower() == "nexa") ? Network.Main : Network.GetNetwork(blockchainInfoResponse.Chain.ToLower());
         else
             network = daemonInfoResponse.Testnet ? Network.TestNet : Network.Main;
 
@@ -476,9 +477,11 @@ public abstract class BitcoinJobManagerBase<TJob> : JobManagerBase<TJob>
 
         isPoS = poolConfig.Template is BitcoinTemplate {IsPseudoPoS: true} ||
             (difficultyResponse.Values().Any(x => x.Path == "proof-of-stake" && !difficultyResponse.Values().Any(x => x.Path == "proof-of-work")));
+        
+        forcePoolAddressDestinationWithPubKey = poolConfig.Template is BitcoinTemplate {ForcePoolAddressDestinationWithPubKey: true};
 
         // Create pool address script from response
-        if(!isPoS)
+        if(!isPoS && !forcePoolAddressDestinationWithPubKey)
         {
             if(extraPoolConfig != null && extraPoolConfig.AddressType != BitcoinAddressType.Legacy)
                 logger.Info(()=> $"Interpreting pool address {poolConfig.Address} as type {extraPoolConfig?.AddressType.ToString()}");
@@ -487,7 +490,10 @@ public abstract class BitcoinJobManagerBase<TJob> : JobManagerBase<TJob>
         }
 
         else
+        {
+            logger.Info(()=> $"Interpreting pool address {poolConfig.Address} as raw public key");
             poolAddressDestination = new PubKey(poolConfig.PubKey ?? validateAddressResponse.PubKey);
+        }
 
         // Payment-processing setup
         if(clusterConfig.PaymentProcessing?.Enabled == true && poolConfig.PaymentProcessing?.Enabled == true)

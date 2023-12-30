@@ -95,8 +95,9 @@ public class PinkConstants
     public const decimal BaseRewardInitial = 1.0m;
 }
 
-// Rethereum
-public class RethereumConstants
+// Hypra
+// https://github.com/Rethereum-blockchain/open-rethereum-pool/blob/master/payouts/unlocker.go
+public class HypraConstants
 {
     public const ulong EpochLength = 32000;
     public const ulong LondonHeight = 15787969;
@@ -138,7 +139,7 @@ public enum EthereumNetworkType
     Pink = 10100,
     OctaSpace = 800001,
     OctaSpaceTestnet = 800002,
-    Rethereum = 622277,
+    Hypra = 622277,
 
     Unknown = -1,
 }
@@ -156,7 +157,7 @@ public enum GethChainType
     Pink = 10100,
     OctaSpace,
     OctaSpaceTestnet,
-    Rethereum,
+    Hypra,
     
     Unknown = -1,
 }

@@ -381,6 +381,11 @@ public class CryptonotePool : PoolBase
                 case CryptonoteStratumMethods.KeepAlive:
                     // recognize activity
                     context.LastActivity = clock.Now;
+                    
+                    // For some reasons, we would never send a reply here :/
+                    // But the official XMRig documentation is explicit, we should reply: https://xmrig.com/docs/extensions/keepalive
+                    // XMRig is such a gift, i wish more mining pool operators were like them and valued open-source, the same way the XMRig devs do
+                    await connection.RespondAsync(new CryptonoteKeepAliveResponse(), request.Id);
                     break;
 
                 default:

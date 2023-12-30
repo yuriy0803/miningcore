@@ -61,7 +61,7 @@ public class BeamJobManager : JobManagerBase<BeamJob>
     private RpcClient walletRpc;
     private IHttpClientFactory httpClientFactory;
     private SimpleRestClient explorerRestClient;
-    private BeamHash solver = new BeamHash {};
+    private BeamHash solver = new BeamHash();
     private readonly IMasterClock clock;
     private readonly IExtraNonceProvider extraNonceProvider;
     protected int maxActiveJobs = 4;

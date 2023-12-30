@@ -1766,6 +1766,27 @@
         "explorerTxLink": "https://explorer.namecoin.info/tx/{0}",
         "explorerAccountLink": "https://explorer.namecoin.info/a/{0}"
     },
+    "nexa": {
+        "name": "Nexa",
+        "canonicalName": "Nexa",
+        "symbol": "NEXA",
+        "family": "nexa",
+        "website": "https://www.nexa.org/",
+        "github": "https://gitlab.com/nexa/nexa",
+        "explorer": "https://explorer.nexa.org/",
+        "market": "https://www.coingecko.com/en/coins/nexacoin",
+        "twitter": "https://twitter.com/nexamoney",
+        "telegram": "https://t.me/nexacoin",
+        "discord": "https://discord.com/invite/2yQNsZV6EJ",
+        "headerHasher": {
+            "hash": "nexapow"
+        },
+        "explorerBlockLink": "https://explorer.nexa.org/block-height/$height$",
+        "explorerTxLink": "https://explorer.nexa.org/tx/{0}",
+        "explorerAccountLink": "https://explorer.nexa.org/address/{0}",
+        "forcePoolAddressDestinationWithPubKey": true,
+        "payoutDecimalPlaces": 2
+    },
     "note-blockchain": {
         "name": "Note Blockchain",
         "canonicalName": "Note-Blockchain",
@@ -4327,13 +4348,14 @@
         "canonicalName": "Monero",
         "symbol": "XMR",
         "family": "cryptonote",
-        "website": "",
-        "market": "",
-        "twitter": "",
+        "website": "https://www.getmonero.org/",
+        "market": "https://coinmarketcap.com/currencies/monero",
+        "twitter": "https://twitter.com/monero",
         "telegram": "",
         "discord": "",
         "hash": "randomx",
         "hashVariant": 0,
+        "blobType": 0,
         "smallestUnit": 1000000000000,
         "addressPrefix": 18,
         "addressPrefixStagenet": 24,
@@ -4359,6 +4381,7 @@
         "discord": "http://discord.conceal.network/",
         "hash": "cn-gpu",
         "hashVariant": 0,
+        "blobType": 0,
         "difficultyTarget": 120,
         "smallestUnit": 1000000,
         "addressPrefix": 31444,
@@ -4367,6 +4390,32 @@
         "addressPrefixIntegratedTestnet": 31444,
         "explorerBlockLink": "https://explorer.conceal.network/index.html?hash=$hash$#blockchain_block",
         "explorerTxLink": "https://explorer.conceal.network/index.html?hash={0}#blockchain_transaction"
+    },
+    "zephyr": {
+        "name": "Zephyr",
+        "canonicalName": "Zephyr",
+        "symbol": "ZEPH",
+        "family": "cryptonote",
+        "website": "https://www.zephyrprotocol.com/",
+        "market": "https://www.coingecko.com/en/coins/zephyr-protocol",
+        "twitter": "https://twitter.com/zephyr_org",
+        "telegram": "https://t.me/zephyrprotocol",
+        "discord": "https://discord.gg/y4mzbDYSqQ",
+        "hash": "randomx",
+        "hashVariant": 0,
+        "blobType": 13,
+        "smallestUnit": 1000000000000,
+        "addressPrefix": 26375690432,
+        "addressPrefixTestnet": 3362369,
+        "addressPrefixStagenet": 3329601,
+        "addressPrefixIntegrated": 52873205952,
+        "addressPrefixIntegratedTestnet": 45352160833,
+        "addressPrefixIntegratedStagenet": 29241806401,
+        "subAddressPrefix": 148723904,
+        "subAddressPrefixTestnet": 253742657,
+        "subAddressPrefixStagenet": 249515585,
+        "explorerBlockLink": "https://explorer.zephyrprotocol.com/block/$height$",
+        "explorerTxLink": "https://explorer.zephyrprotocol.com/tx/{0}"
     },
     "callisto": {
         "name": "Callisto Network",
@@ -4494,22 +4543,22 @@
         "explorerAccountLink": "https://pinkscan.org/address/{0}",
         "ethasher": "ethash"
     },
-    "rethereum": {
-        "name": "Rethereum",
-        "canonicalName": "Rethereum",
-        "symbol": "RTH",
+    "hypra": {
+        "name": "Hypra",
+        "canonicalName": "Hypra",
+        "symbol": "HYP",
         "family": "ethereum",
-        "website": "https://www.rethereum.org/",
+        "website": "https://www.hypra.network/",
         "market": "",
         "twitter": "",
         "telegram": "",
         "discord": "https://discord.gg/xCB4AJDEFb",
         "explorerBlockLinks": {
-            "block": "https://explorer.rethereum.org/block/$height$",
-            "uncle": "https://explorer.rethereum.org/block/$hash$"
+            "block": "https://explorer.hypra.network/block/$height$",
+            "uncle": "https://explorer.hypra.network/block/$hash$"
         },
-        "explorerTxLink": "https://explorer.rethereum.org/tx/{0}",
-        "explorerAccountLink": "https://explorer.rethereum.org/address/{0}",
+        "explorerTxLink": "https://explorer.hypra.network/tx/{0}",
+        "explorerAccountLink": "https://explorer.hypra.network/address/{0}",
         "ethasher": "ethashb3"
     },
     "ubiq": {
@@ -4557,5 +4606,47 @@
         "explorerBlockLink": "https://explorer.alephium.org/blocks/$hash$",
         "explorerTxLink": "https://explorer.alephium.org/transactions/{0}",
         "explorerAccountLink": "https://explorer.alephium.org/addresses/{0}"
+    },
+    "kaspa": {
+        "name": "Kaspa",
+        "canonicalName": "Kaspa",
+        "symbol": "KAS",
+        "family": "kaspa",
+        "website": "https://kaspa.org/",
+        "market": "https://coinmarketcap.com/currencies/kaspa/",
+        "twitter": "https://twitter.com/KaspaCurrency",
+        "telegram": "https://t.me/Kaspaenglish",
+        "discord": "https://discord.gg/kS3SK5F36R",
+        "explorerBlockLink": "https://explorer.kaspa.org/blocks/$hash$",
+        "explorerTxLink": "https://explorer.kaspa.org/txs/{0}",
+        "explorerAccountLink": "https://explorer.kaspa.org/addresses/{0}"
+    },
+    "karlsencoin": {
+        "name": "Karlsencoin",
+        "canonicalName": "Karlsencoin",
+        "symbol": "KLS",
+        "family": "kaspa",
+        "website": "https://karlsencoin.com/",
+        "market": "",
+        "twitter": "https://twitter.com/karlsennetwork",
+        "telegram": "https://t.me/KarlsenNetwork",
+        "discord": "https://discord.com/invite/NasfjsEm",
+        "explorerBlockLink": "https://explorer.karlsencoin.com/blocks/$hash$",
+        "explorerTxLink": "https://explorer.karlsencoin.com/txs/{0}",
+        "explorerAccountLink": "https://explorer.karlsencoin.com/addresses/{0}"
+    },
+    "pyrin": {
+        "name": "Pyrin",
+        "canonicalName": "Pyrin",
+        "symbol": "PYI",
+        "family": "kaspa",
+        "website": "https://pyrin.network/",
+        "market": "",
+        "twitter": "https://twitter.com/pyrin_network",
+        "telegram": "https://t.me/pyrin_network",
+        "discord": "https://discord.gg/QQgWRntF",
+        "explorerBlockLink": "https://explorer.pyrin.network/blocks/$hash$",
+        "explorerTxLink": "https://explorer.pyrin.network/txs/{0}",
+        "explorerAccountLink": "https://explorer.pyrin.network/addresses/{0}"
     }
 }

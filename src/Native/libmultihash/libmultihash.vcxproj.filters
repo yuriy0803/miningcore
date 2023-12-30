@@ -254,6 +254,21 @@
     <ClInclude Include="sha3\extra.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shake\crypto\cpu_endian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shake\crypto\crypto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shake\cshake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shake\keccak.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shake\shake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="x21s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -578,6 +593,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sha3\extra.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shake\cshake.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shake\keccak.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shake\shake.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="x21s.c">

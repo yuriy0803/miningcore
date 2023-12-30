@@ -141,16 +141,44 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
 
     private async Task<bool> EnsureBalance(decimal requiredAmount, CryptonoteCoinTemplate coin, CancellationToken ct)
     {
-        var response = await rpcClientWallet.ExecuteAsync<GetBalanceResponse>(logger, CryptonoteWalletCommands.GetBalance, ct);
+        decimal unlockedBalance = 0.0m;
+        decimal balance = 0.0m;
 
-        if(response.Error != null)
+        // Not all Cryptonote coins are equal
+        switch(coin.Symbol)
         {
-            logger.Error(() => $"[{LogCategory}] Daemon command '{CryptonoteWalletCommands.GetBalance}' returned error: {response.Error.Message} code {response.Error.Code}");
-            return false;
-        }
+            case "ZEPH":
+                var responseBalances = await rpcClientWallet.ExecuteAsync<GetBalancesResponse>(logger, CryptonoteWalletCommands.GetBalance, ct);
 
-        var unlockedBalance = Math.Floor(response.Response.UnlockedBalance / coin.SmallestUnit);
-        var balance = Math.Floor(response.Response.Balance / coin.SmallestUnit);
+                if(responseBalances.Error != null)
+                {
+                    logger.Error(() => $"[{LogCategory}] Daemon command '{CryptonoteWalletCommands.GetBalance}' returned error: {responseBalances.Error.Message} code {responseBalances.Error.Code}");
+                    return false;
+                }
+                
+                var balances = responseBalances.Response.Balances
+                    .Where(x => x.Asset == coin.Symbol)
+                    .ToArray();
+                
+                if(balances.Length > 0)
+                {
+                    unlockedBalance = balances.Sum(x => (x.UnlockedBalance / coin.SmallestUnit));
+                    balance = balances.Sum(x => (x.Balance / coin.SmallestUnit));
+                }
+                break;
+            default:
+                var responseBalance = await rpcClientWallet.ExecuteAsync<GetBalanceResponse>(logger, CryptonoteWalletCommands.GetBalance, ct);
+
+                if(responseBalance.Error != null)
+                {
+                    logger.Error(() => $"[{LogCategory}] Daemon command '{CryptonoteWalletCommands.GetBalance}' returned error: {responseBalance.Error.Message} code {responseBalance.Error.Code}");
+                    return false;
+                }
+                
+                unlockedBalance = responseBalance.Response.UnlockedBalance / coin.SmallestUnit;
+                balance = responseBalance.Response.Balance / coin.SmallestUnit;
+                break;
+        }
 
         if(unlockedBalance < requiredAmount)
         {
@@ -403,7 +431,35 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
                 {
                     block.Status = BlockStatus.Confirmed;
                     block.ConfirmationProgress = 1;
-                    block.Reward = (blockHeader.Reward / coin.SmallestUnit) * coin.BlockrewardMultiplier;
+                    
+                    // Not all Cryptonote coins are equal
+                    switch(coin.Symbol)
+                    {
+                        case "ZEPH":
+                            ulong osirisHardForkBlock = ZephyrConstants.OsirisHardForkBlockMainnet;
+                            decimal miningReward = ZephyrConstants.MiningRewardInitial;
+                            decimal reserveReward = ZephyrConstants.ReserveRewardInitial;
+                            
+                            if(networkType == CryptonoteNetworkType.Test || networkType == CryptonoteNetworkType.Stage)
+                            {
+                                if(networkType == CryptonoteNetworkType.Test)
+                                    osirisHardForkBlock = ZephyrConstants.OsirisHardForkBlockTestnet;
+                                else
+                                    osirisHardForkBlock = ZephyrConstants.OsirisHardForkBlockStagenet; 
+                                
+                                miningReward = ZephyrConstants.OsirisHardForkMiningReward;
+                                reserveReward = ZephyrConstants.OsirisHardForkReserveReward;
+                            }
+
+                            if(block.BlockHeight >= osirisHardForkBlock)
+                                logger.Debug(() => $"[{LogCategory}] Osiris fork period detected...");
+
+                            block.Reward = (((blockHeader.Reward / coin.SmallestUnit) / (1m - reserveReward)) * miningReward) * coin.BlockrewardMultiplier;
+                            break;
+                        default:
+                            block.Reward = (blockHeader.Reward / coin.SmallestUnit) * coin.BlockrewardMultiplier;
+                            break;
+                    }
 
                     logger.Info(() => $"[{LogCategory}] Unlocked block {block.BlockHeight} worth {FormatAmount(block.Reward)}");
 
@@ -435,7 +491,7 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
 #if !DEBUG // ensure we have peers
             var infoResponse = await rpcClient.ExecuteAsync<GetInfoResponse>(logger, CNC.GetInfo, ct);
             if (infoResponse.Error != null || infoResponse.Response == null ||
-                infoResponse.Response.IncomingConnectionsCount + infoResponse.Response.OutgoingConnectionsCount < 3)
+                infoResponse.Response.IncomingConnectionsCount + infoResponse.Response.OutgoingConnectionsCount < 2)
             {
                 logger.Warn(() => $"[{LogCategory}] Payout aborted. Not enough peers (4 required)");
                 return;
@@ -454,6 +510,7 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
                 {
                     case CryptonoteNetworkType.Main:
                         if(addressPrefix != coin.AddressPrefix &&
+                           addressPrefix != coin.SubAddressPrefix &&
                            addressIntegratedPrefix != coin.AddressPrefixIntegrated)
                         {
                             logger.Warn(() => $"[{LogCategory}] Excluding payment to invalid address: {x.Address}");
@@ -464,6 +521,7 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
 
                     case CryptonoteNetworkType.Stage:
                         if(addressPrefix != coin.AddressPrefixStagenet &&
+                           addressPrefix != coin.SubAddressPrefixStagenet &&
                            addressIntegratedPrefix != coin.AddressPrefixIntegratedStagenet)
                         {
                             logger.Warn(() => $"[{LogCategory}] Excluding payment to invalid address: {x.Address}");
@@ -474,6 +532,7 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
 
                     case CryptonoteNetworkType.Test:
                         if(addressPrefix != coin.AddressPrefixTestnet &&
+                           addressPrefix != coin.SubAddressPrefixTestnet &&
                            addressIntegratedPrefix != coin.AddressPrefixIntegratedTestnet)
                         {
                             logger.Warn(() => $"[{LogCategory}] Excluding payment to invalid address: {x.Address}");

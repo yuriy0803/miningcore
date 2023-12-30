@@ -102,7 +102,7 @@ public class BeamPayoutHandler : PayoutHandlerBase,
             return false;
         }
 
-        var balance = Math.Floor(response.Response.Balance / BeamConstants.SmallestUnit);
+        var balance = response.Response.Balance / BeamConstants.SmallestUnit;
 
         if(balance < requiredAmount)
         {

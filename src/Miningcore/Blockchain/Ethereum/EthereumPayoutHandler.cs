@@ -166,7 +166,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                                 var gasUsed = blockHashResponse.Response.GasUsed;
 
                                 var burnedFee = (decimal) 0;
-                                if(extraPoolConfig?.ChainTypeOverride == "Ethereum" || extraPoolConfig?.ChainTypeOverride == "Main" || extraPoolConfig?.ChainTypeOverride == "MainPow" || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "Rethereum")
+                                if(extraPoolConfig?.ChainTypeOverride == "Ethereum" || extraPoolConfig?.ChainTypeOverride == "Main" || extraPoolConfig?.ChainTypeOverride == "MainPow" || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "Hypra")
                                     burnedFee = (baseGas * gasUsed / EthereumConstants.Wei);
 
                                 block.Hash = blockHash;
@@ -298,7 +298,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         // ensure we have peers
         var infoResponse = await rpcClient.ExecuteAsync<string>(logger, EC.GetPeerCount, ct);
 
-        if((networkType == EthereumNetworkType.Main || extraPoolConfig?.ChainTypeOverride == "Classic" || extraPoolConfig?.ChainTypeOverride == "Mordor" || networkType == EthereumNetworkType.MainPow || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "OctaSpace" || extraPoolConfig?.ChainTypeOverride == "OctaSpaceTestnet" || extraPoolConfig?.ChainTypeOverride == "Rethereum") &&
+        if((networkType == EthereumNetworkType.Main || extraPoolConfig?.ChainTypeOverride == "Classic" || extraPoolConfig?.ChainTypeOverride == "Mordor" || networkType == EthereumNetworkType.MainPow || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "OctaSpace" || extraPoolConfig?.ChainTypeOverride == "OctaSpaceTestnet" || extraPoolConfig?.ChainTypeOverride == "Hypra") &&
            (infoResponse.Error != null || string.IsNullOrEmpty(infoResponse.Response) ||
                infoResponse.Response.IntegralFromHex<int>() < EthereumConstants.MinPayoutPeerCount))
         {
@@ -433,15 +433,15 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                 
                return OctaSpaceConstants.BaseRewardInitial;
 
-            case GethChainType.Rethereum:
-                if(height >= RethereumConstants.LondonHeight)
-                    return RethereumConstants.LondonBlockReward;
-                if(height >= RethereumConstants.ArrowGlacierHeight)
-                    return RethereumConstants.ArrowGlacierBlockReward;
-                if(height >= RethereumConstants.GrayGlacierHeight)
-                    return RethereumConstants.GrayGlacierBlockReward;
+            case GethChainType.Hypra:
+                if(height >= HypraConstants.LondonHeight)
+                    return HypraConstants.LondonBlockReward;
+                if(height >= HypraConstants.ArrowGlacierHeight)
+                    return HypraConstants.ArrowGlacierBlockReward;
+                if(height >= HypraConstants.GrayGlacierHeight)
+                    return HypraConstants.GrayGlacierBlockReward;
 
-               return RethereumConstants.BaseRewardInitial;
+               return HypraConstants.BaseRewardInitial;
             
             default:
                 throw new Exception("Unable to determine block reward: Unsupported chain type");
@@ -496,7 +496,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                     reward = 0;
                 
                 break;
-            case GethChainType.Rethereum:
+            case GethChainType.Hypra:
                 reward = 0.1m;
                 
                 break;

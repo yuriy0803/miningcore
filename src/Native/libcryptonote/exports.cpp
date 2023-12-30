@@ -19,14 +19,16 @@ using namespace cryptonote;
 
 extern "C" void cn_fast_hash(const void* data, size_t length, char* hash);
 
-extern "C" MODULE_API bool convert_blob_export(const char* input, unsigned int inputSize, unsigned char *output, unsigned int *outputSize)
+extern "C" MODULE_API bool convert_blob_export(const char* input, unsigned int inputSize, unsigned char *output, unsigned int *outputSize, unsigned int blobType)
 {
 	unsigned int originalOutputSize = *outputSize;
+        enum BLOB_TYPE blob_type = static_cast<enum BLOB_TYPE>((int) blobType);
 
 	blobdata input_blob = std::string(input, inputSize);
 	blobdata result = "";
 
 	block block = AUTO_VAL_INIT(block);
+        block.set_blob_type(blob_type);
 	if (!parse_and_validate_block_from_blob(input_blob, block))
 	{
 		*outputSize = 0;
@@ -43,6 +45,28 @@ extern "C" MODULE_API bool convert_blob_export(const char* input, unsigned int i
 
 	// success
 	memcpy(output, result.data(), result.length());
+	return true;
+}
+
+extern "C" MODULE_API bool get_block_id_export(const char* input, unsigned int inputSize, unsigned char *output, unsigned int blobType)
+{
+	enum BLOB_TYPE blob_type = static_cast<enum BLOB_TYPE>((int) blobType);
+
+	blobdata input_blob = std::string(input, inputSize);
+	crypto::hash block_id;
+
+	block block = AUTO_VAL_INIT(block);
+        block.set_blob_type(blob_type);
+	if (!parse_and_validate_block_from_blob(input_blob, block))
+                return false;
+
+	if (!get_block_hash(block, block_id))
+                return false;
+        
+        char *cstr = reinterpret_cast<char*>(&block_id);
+
+	// success
+	memcpy(output, cstr, 32);
 	return true;
 }
 

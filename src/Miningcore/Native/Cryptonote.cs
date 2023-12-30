@@ -8,7 +8,10 @@ namespace Miningcore.Native;
 public static unsafe class CryptonoteBindings
 {
     [DllImport("libcryptonote", EntryPoint = "convert_blob_export", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool convert_blob(byte* input, int inputSize, byte* output, ref int outputSize);
+    private static extern bool convert_blob(byte* input, int inputSize, byte* output, ref int outputSize, int blobType);
+    
+    [DllImport("libcryptonote", EntryPoint = "get_block_id_export", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool get_block_id(byte* input, int inputSize, byte* output, int blobType);
 
     [DllImport("libcryptonote", EntryPoint = "decode_address_export", CallingConvention = CallingConvention.Cdecl)]
     private static extern ulong decode_address(byte* input, int inputSize);
@@ -19,7 +22,7 @@ public static unsafe class CryptonoteBindings
     [DllImport("libcryptonote", EntryPoint = "cn_fast_hash_export", CallingConvention = CallingConvention.Cdecl)]
     private static extern int cn_fast_hash(byte* input, byte* output, uint inputLength);
 
-    public static byte[] ConvertBlob(ReadOnlySpan<byte> data, int size)
+    public static byte[] ConvertBlob(ReadOnlySpan<byte> data, int size, int blobType = 0)
     {
         Contract.Requires<ArgumentException>(data.Length > 0);
 
@@ -35,7 +38,7 @@ public static unsafe class CryptonoteBindings
                 var success = false;
                 fixed (byte* output = outputBuffer)
                 {
-                    success = convert_blob(input, size, output, ref outputBufferLength);
+                    success = convert_blob(input, size, output, ref outputBufferLength, blobType);
                 }
 
                 if(!success)
@@ -50,7 +53,7 @@ public static unsafe class CryptonoteBindings
 
                     fixed (byte* output = outputBuffer)
                     {
-                        success = convert_blob(input, size, output, ref outputBufferLength);
+                        success = convert_blob(input, size, output, ref outputBufferLength, blobType);
                     }
 
                     if(!success)
@@ -67,6 +70,19 @@ public static unsafe class CryptonoteBindings
             finally
             {
                 ArrayPool<byte>.Shared.Return(outputBuffer);
+            }
+        }
+    }
+    
+    public static void GetBlockId(ReadOnlySpan<byte> data, Span<byte> result, int blobType = 0)
+    {
+        Contract.Requires<ArgumentException>(result.Length >= 32);
+
+        fixed (byte* input = data)
+        {
+            fixed (byte* output = result)
+            {
+                get_block_id(input, data.Length, output, blobType);
             }
         }
     }

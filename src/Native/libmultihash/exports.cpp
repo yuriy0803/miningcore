@@ -62,6 +62,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "skydoge.h"
 #include "yescrypt/yescrypt.h"
 #include "yespower/yespower.h"
+#include "shake/cshake.h"
+#include "shake/shake.h"
 
 #ifdef _WIN32
 #include "blake2/ref/blake2.h"
@@ -100,6 +102,26 @@ extern "C" MODULE_API void sha3_256_export(const char* input, char* output, uint
 extern "C" MODULE_API void sha3_512_export(const char* input, char* output, uint32_t input_len)
 {
     sha3(input, input_len, output, 64);
+}
+
+extern "C" MODULE_API void cshake128_export(const unsigned char* input, uint32_t input_len, const char* name, uint32_t name_len, const char* custom, uint32_t custom_len, unsigned char* output, uint32_t output_len)
+{
+    cshakeCompute(128, input, input_len, name_len == 0 ? NULL : name, name_len, custom_len == 0 ? NULL : custom, custom_len, output, output_len);
+}
+
+extern "C" MODULE_API void cshake256_export(const unsigned char* input, uint32_t input_len, const char* name, uint32_t name_len, const char* custom, uint32_t custom_len, unsigned char* output, uint32_t output_len)
+{
+    cshakeCompute(256, input, input_len, name_len == 0 ? NULL : name, name_len, custom_len == 0 ? NULL : custom, custom_len, output, output_len);
+}
+
+extern "C" MODULE_API void shake128_export(const unsigned char* input, uint32_t input_len, unsigned char* output, uint32_t output_len)
+{
+    shakeCompute(128, input, input_len, output, output_len);
+}
+
+extern "C" MODULE_API void shake256_export(const unsigned char* input, uint32_t input_len, unsigned char* output, uint32_t output_len)
+{
+    shakeCompute(256, input, input_len, output, output_len);
 }
 
 extern "C" MODULE_API void hmq17_export(const char* input, char* output, uint32_t input_len)
@@ -189,14 +211,14 @@ extern "C" MODULE_API void blake2s_export(const char* input, char* output, uint3
     blake2s(output, output_len == -1 ? BLAKE2S_OUTBYTES : output_len, input, input_len, NULL, 0);
 }
 
-extern "C" MODULE_API void blake2b_export(const char* input, char* output, uint32_t input_len, uint32_t output_len)
+extern "C" MODULE_API void blake2b_export(const char* input, char* output, uint32_t input_len, uint32_t output_len, const char* key, uint32_t key_len)
 {
-    blake2b(output, output_len == -1 ? BLAKE2B_OUTBYTES : output_len, input, input_len, NULL, 0);
+    blake2b(output, output_len == -1 ? BLAKE2B_OUTBYTES : output_len, input, input_len, key_len == 0 ? NULL : key, key_len);
 }
 
-extern "C" MODULE_API void blake3_export(const char* input, char* output, uint32_t input_length)
+extern "C" MODULE_API void blake3_export(const char* input, char* output, uint32_t input_length, const char* key, uint32_t key_len)
 {
-    blake3_hash(input, output, input_length);
+    blake3(input, output, input_length, key_len == 0 ? NULL : key, key_len);
 }
 
 extern "C" MODULE_API void dcrypt_export(const char* input, char* output, uint32_t input_len)

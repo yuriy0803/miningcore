@@ -247,6 +247,11 @@
     <ClInclude Include="sha3\sph_types.h" />
     <ClInclude Include="sha3\sph_whirlpool.h" />
     <ClInclude Include="sha3\SWIFFTX.h" />
+    <ClInclude Include="shake\crypto\cpu_endian.h" />
+    <ClInclude Include="shake\crypto\crypto.h" />
+    <ClInclude Include="shake\cshake.h" />
+    <ClInclude Include="shake\keccak.h" />
+    <ClInclude Include="shake\shake.h" />
     <ClInclude Include="shavite3.h" />
     <ClInclude Include="skein.h" />
     <ClInclude Include="skein2.h" />
@@ -371,6 +376,9 @@
     <ClCompile Include="sha3\sph_tiger.c" />
     <ClCompile Include="sha3\sph_whirlpool.c" />
     <ClCompile Include="sha3\SWIFFTX.c" />
+    <ClCompile Include="shake\cshake.c" />
+    <ClCompile Include="shake\keccak.c" />
+    <ClCompile Include="shake\shake.c" />
     <ClCompile Include="shavite3.c" />
     <ClCompile Include="skein.c" />
     <ClCompile Include="skein2.c" />

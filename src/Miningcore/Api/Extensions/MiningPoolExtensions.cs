@@ -3,6 +3,7 @@ using Miningcore.Api.Responses;
 using Miningcore.Blockchain;
 using Miningcore.Blockchain.Alephium.Configuration;
 using Miningcore.Blockchain.Ergo.Configuration;
+using Miningcore.Blockchain.Kaspa.Configuration;
 using Miningcore.Configuration;
 using Miningcore.Extensions;
 using Miningcore.Mining;
@@ -38,6 +39,9 @@ public static class MiningPoolExtensions
                     break;
                 case "ergo":
                     extra.StripValue(nameof(ErgoPaymentProcessingConfigExtra.WalletPassword));
+                    break;
+                case "kaspa":
+                    extra.StripValue(nameof(KaspaPaymentProcessingConfigExtra.WalletPassword));
                     break;
             }
         }

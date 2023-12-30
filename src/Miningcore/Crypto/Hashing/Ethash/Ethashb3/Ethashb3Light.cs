@@ -30,7 +30,7 @@ public class Ethashb3Light : IEthashLight
 
     public async Task<IEthashCache> GetCacheAsync(ILogger logger, ulong block, CancellationToken ct)
     {
-        var epoch = block / RethereumConstants.EpochLength;
+        var epoch = block / HypraConstants.EpochLength;
         Cache result;
 
         lock(cacheLock)

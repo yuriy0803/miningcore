@@ -40,6 +40,21 @@ public static class ActionUtils
             errorHandler?.Invoke(ex);
         }
     }
+    
+    public static async Task<T> Guard<T>(Task<T> task, Action<Exception> errorHandler = null)
+    {
+        try
+        {
+            return await task;
+        }
+
+        catch (Exception ex)
+        {
+            errorHandler?.Invoke(ex);
+
+            return default;
+        }
+    }
 
     public static async Task<T> Guard<T>(Func<Task<T>> func, Action<Exception> errorHandler = null)
     {

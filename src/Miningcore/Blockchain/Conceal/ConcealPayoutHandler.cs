@@ -102,7 +102,7 @@ public class ConcealPayoutHandler : PayoutHandlerBase,
             return false;
         }
 
-        var balance = Math.Floor(response.Response.Balance / coin.SmallestUnit);
+        var balance = response.Response.Balance / coin.SmallestUnit;
 
         if(balance < requiredAmount)
         {
