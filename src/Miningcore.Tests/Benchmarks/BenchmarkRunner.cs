@@ -2,7 +2,6 @@ using System;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Running;
-using Miningcore.Tests.Benchmarks.Crypto;
 using Miningcore.Tests.Benchmarks.Stratum;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,7 +18,7 @@ public class Benchmarks
     }
 
     [Fact(Skip = "** Uncomment me to run benchmarks **")]
-    public void Run_Stratum_Benchmarks()
+    public void Run_Benchmarks()
     {
         var logger = new AccumulationLogger();
 
@@ -28,21 +27,6 @@ public class Benchmarks
             .WithOptions(ConfigOptions.DisableOptimizationsValidator);
 
         BenchmarkRunner.Run<StratumConnectionBenchmarks>(config);
-
-        // write benchmark summary
-        output.WriteLine(logger.GetLog());
-    }
-    
-    [Fact(Skip = "** Uncomment me to run benchmarks **")]
-    public void Run_Crypto_Benchmarks()
-    {
-        var logger = new AccumulationLogger();
-
-        var config = ManualConfig.Create(DefaultConfig.Instance)
-            .AddLogger(logger)
-            .WithOptions(ConfigOptions.DisableOptimizationsValidator);
-
-        BenchmarkRunner.Run<EthashBenchmarks>(config);
 
         // write benchmark summary
         output.WriteLine(logger.GetLog());
