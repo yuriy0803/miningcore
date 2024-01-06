@@ -82,7 +82,7 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
                             logger.Debug(() => $"Establishing socket connection with `{iPAddress.First().ToString()}:{port}`");
                             await client.ConnectAsync(ipEndPoint, cts.Token);
                             if (client.Connected)
-                                logger.Debug(() => $"Socket connection successfuly established");
+                                logger.Debug(() => $"Socket connection successfully established");
 
                             using NetworkStream stream = new NetworkStream(client, false);
                             string hello = "hello";
