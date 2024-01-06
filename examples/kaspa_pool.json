@@ -74,6 +74,7 @@
                 "percentage": 1
             }
         ],
+        "protobufWalletRpcServiceName": "kaspawalletd.kaspawalletd",
         "clientConnectionTimeout": 600,
         "banning": {
             "enabled": true,
@@ -115,15 +116,13 @@
                 "host": "127.0.0.1",
                 "port": 16110,
                 "user": null,
-                "password": null,
-                "serviceName": "protowire.RPC"
+                "password": null
             },
             {
                 "host": "127.0.0.1",
                 "port": 8082,
                 "user": null,
                 "password": null,
-                "serviceName": "kaspawalletd.kaspawalletd",
                 "category": "wallet"
             }
         ],

@@ -2280,7 +2280,7 @@
         "explorerTxLink": "https://ravencoin.network/rvn/transaction/{0}",
         "explorerAccountLink": "https://ravencoin.network/rvn/address/{0}"
     },
-        "firo": {
+    "firo": {
         "name": "Firo",
         "symbol": "FIRO",
         "family": "progpow",
@@ -2310,6 +2310,124 @@
         "explorerBlockLink": "https://explorer.firo.org/block/$hash$",
         "explorerTxLink": "https://explorer.firo.org/tx/{0}",
         "explorerAccountLink": "https://explorer.firo.org/address/{0}"
+    },
+    "neurai": {
+        "name": "Neurai",
+        "symbol": "XNA",
+        "family": "progpow",
+        "website": "https://neurai.org/",
+        "market": "https://coinmarketcap.com/currencies/neurai/",
+        "twitter": "https://twitter.com/neuraiproject",
+        "telegram": "https://t.me/neuraiproject",
+        "discord": "https://discord.com/invite/dxJSrSeXjF",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://explorer.neurai.org/block/$hash$",
+        "explorerTxLink": "https://explorer.neurai.org/tx/{0}",
+        "explorerAccountLink": "https://explorer.neurai.org/address/{0}"
+    },
+    "clore": {
+        "name": "Clore",
+        "symbol": "CLORE",
+        "family": "progpow",
+        "website": "https://blockchain.clore.ai/",
+        "market": "https://coinmarketcap.com/currencies/clore-ai/",
+        "twitter": "https://twitter.com/clore_ai",
+        "telegram": "https://t.me/clorechat",
+        "discord": "https://discord.com/invite/7sAEVGza8w",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasCommunityAddress": true,
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://exploreblockchain.clore.ai/block/$hash$",
+        "explorerTxLink": "https://exploreblockchain.clore.ai/tx/{0}",
+        "explorerAccountLink": "https://exploreblockchain.clore.ai/address/{0}"
+    },
+    "meowcoin": {
+        "name": "Meowcoin",
+        "symbol": "MEWC",
+        "family": "progpow",
+        "website": "https://www.mewccrypto.com/",
+        "market": "https://coinmarketcap.com/currencies/meowcoin/",
+        "twitter": "https://twitter.com/MeowcoinProject",
+        "telegram": "",
+        "discord": "https://discord.com/invite/EYv5cCjQRd",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasCommunityAddress": true,
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://explorer.mewccrypto.com/block/$hash$",
+        "explorerTxLink": "https://explorer.mewccrypto.com/tx/{0}",
+        "explorerAccountLink": "https://explorer.mewccrypto.com/address/{0}"
+    },
+    "aipg": {
+        "name": "AI Power Grid",
+        "symbol": "AIPG",
+        "family": "progpow",
+        "website": "https://www.aipowergrid.io/",
+        "market": "https://www.coingecko.com/en/coins/ai-power-grid",
+        "twitter": "https://twitter.com/AIPowerGrid",
+        "telegram": "",
+        "discord": "https://discord.com/invite/vZ9XrTSRYr",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://explorer.aipowergrid.io/block/$hash$",
+        "explorerTxLink": "https://explorer.aipowergrid.io/tx/{0}",
+        "explorerAccountLink": "https://explorer.aipowergrid.io/address/{0}"
     },
     "novo": {
       "name": "Novo",
@@ -2351,6 +2469,32 @@
         "explorerBlockLink": "https://explorer.pulsarcoin.org/block/$height$",
         "explorerTxLink": "https://explorer.pulsarcoin.org/tx/{0}",
         "explorerAccountLink": "https://explorer.pulsarcoin.org/address/{0}"
+    },
+    "vishai": {
+        "name": "Vishai",
+        "canonicalName": "VishAI",
+        "symbol": "VISH",
+        "family": "bitcoin",
+        "website": "https://vishcoin.com/",
+        "market": "",
+        "twitter": "https://twitter.com/vishcoinai",
+        "telegram": "https://t.me/vishaiofficial",
+        "discord": "https://discord.gg/cxCfHuNpWn",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "yespower"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [ { "hash": "yespower" } ]
+        },
+        "hasMasterNodes": true,
+        "shareMultiplier": 65536,
+        "explorerBlockLink": "https://explorer.vishcoin.com/block/$hash$",
+        "explorerTxLink": "https://explorer.vishcoin.com/tx/{0}",
+        "explorerAccountLink": "https://explorer.vishcoin.com/address/{0}"
     },
     "bitoreum": {
         "name": "Bitoreum",
