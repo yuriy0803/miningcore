@@ -2,7 +2,7 @@
 [![.NET](https://github.com/blackmennewstyle/miningcore/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blackmennewstyle/miningcore/actions/workflows/dotnet.yml)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
-<img src="https://github.com/blackmennewstyle/raw/master/logo.png" width="150">
+<img src="https://github.com/blackmennewstyle/miningcore/raw/master/logo.png" width="150">
 
 ### Features
 
