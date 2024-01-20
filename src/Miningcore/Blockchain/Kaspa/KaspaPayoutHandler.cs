@@ -36,7 +36,6 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
         IBalanceRepository balanceRepo,
         IPaymentRepository paymentRepo,
         IMasterClock clock,
-        IHttpClientFactory httpClientFactory,
         IMessageBus messageBus) :
         base(cf, mapper, shareRepo, blockRepo, balanceRepo, paymentRepo, clock, messageBus)
     {
@@ -45,11 +44,9 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
         Contract.RequiresNonNull(paymentRepo);
 
         this.ctx = ctx;
-        this.httpClientFactory = httpClientFactory;
     }
 
     protected readonly IComponentContext ctx;
-    private IHttpClientFactory httpClientFactory;
     protected kaspad.KaspadRPC.KaspadRPCClient rpc;
     protected kaspaWalletd.KaspaWalletdRPC.KaspaWalletdRPCClient walletRpc;
     private string network;
@@ -84,8 +81,8 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
         if(walletDaemonEndpoints.Length == 0)
             throw new PaymentException("Wallet-RPC daemon is not configured (Daemon configuration for kaspa-pools require an additional entry of category 'wallet' pointing to the wallet daemon)");
 
-        rpc = KaspaClientFactory.CreateKaspadRPCClient(httpClientFactory, daemonEndpoints, extraPoolConfig?.ProtobufDaemonRpcServiceName ?? KaspaConstants.ProtobufDaemonRpcServiceName);
-        walletRpc = KaspaClientFactory.CreateKaspaWalletdRPCClient(httpClientFactory, walletDaemonEndpoints, extraPoolConfig?.ProtobufWalletRpcServiceName ?? KaspaConstants.ProtobufWalletRpcServiceName);
+        rpc = KaspaClientFactory.CreateKaspadRPCClient(daemonEndpoints, extraPoolConfig?.ProtobufDaemonRpcServiceName ?? KaspaConstants.ProtobufDaemonRpcServiceName);
+        walletRpc = KaspaClientFactory.CreateKaspaWalletdRPCClient(walletDaemonEndpoints, extraPoolConfig?.ProtobufWalletRpcServiceName ?? KaspaConstants.ProtobufWalletRpcServiceName);
         
         // we need a stream to communicate with Kaspad
         var stream = rpc.MessageStream(null, null, ct);
@@ -94,7 +91,7 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
         request.GetCurrentNetworkRequest = new kaspad.GetCurrentNetworkRequestMessage();
         await Guard(() => stream.RequestStream.WriteAsync(request),
             ex=> throw new PaymentException($"Error writing a request in the communication stream '{ex.GetType().Name}' : {ex}"));
-        await foreach (var currentNetwork in stream.ResponseStream.ReadAllAsync())
+        await foreach (var currentNetwork in stream.ResponseStream.ReadAllAsync(ct))
         {
             if(!string.IsNullOrEmpty(currentNetwork.GetCurrentNetworkResponse.Error?.Message))
                 throw new PaymentException($"Daemon reports: {currentNetwork.GetCurrentNetworkResponse.Error?.Message}");
@@ -119,6 +116,9 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
         var result = new List<Block>();
         int minConfirmations = extraPoolPaymentProcessingConfig?.MinimumConfirmations ?? (network == "mainnet" ? 120 : 110);
 
+        // we need a stream to communicate with Kaspad
+        var stream = rpc.MessageStream(null, null, ct);
+
         for(var i = 0; i < pageCount; i++)
         {
             // get a page full of blocks
@@ -131,9 +131,6 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
             {
                 var block = page[j];
                 
-                // we need a stream to communicate with Kaspad
-                var stream = rpc.MessageStream(null, null, ct);
-
                 var request = new kaspad.KaspadMessage();
                 request.GetBlockRequest = new kaspad.GetBlockRequestMessage
                 {
@@ -142,7 +139,7 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                 };
                 await Guard(() => stream.RequestStream.WriteAsync(request),
                     ex=> logger.Debug(ex));
-                await foreach (var blockInfo in stream.ResponseStream.ReadAllAsync())
+                await foreach (var blockInfo in stream.ResponseStream.ReadAllAsync(ct))
                 {
                     // We lost that battle
                     if(!string.IsNullOrEmpty(blockInfo.GetBlockResponse.Error?.Message))
@@ -160,7 +157,6 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                     {
                         logger.Info(() => $"[{LogCategory}] Block {block.BlockHeight} uses a custom minimum confirmations calculation [{minConfirmations}]");
 
-                        var streamConfirmations = rpc.MessageStream(null, null, ct);
                         var requestConfirmations = new kaspad.KaspadMessage();
                         requestConfirmations.GetBlocksRequest = new kaspad.GetBlocksRequestMessage
                         {
@@ -168,14 +164,13 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                             IncludeBlocks = false,
                             IncludeTransactions = false,
                         };
-                        await Guard(() => streamConfirmations.RequestStream.WriteAsync(requestConfirmations),
+                        await Guard(() => stream.RequestStream.WriteAsync(requestConfirmations),
                             ex=> logger.Debug(ex));
-                        await foreach (var responseConfirmations in streamConfirmations.ResponseStream.ReadAllAsync())
+                        await foreach (var responseConfirmations in stream.ResponseStream.ReadAllAsync(ct))
                         {
                             block.ConfirmationProgress = Math.Min(1.0d, (double) responseConfirmations.GetBlocksResponse.BlockHashes.Count / minConfirmations);
                             break;
                         }
-                        await streamConfirmations.RequestStream.CompleteAsync();
 
                         result.Add(block);
 
@@ -195,17 +190,15 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                             {
                                 logger.Debug(() => $"[{LogCategory}] Block {block.BlockHeight} contains child: {childrenHash}");
 
-                                var streamChildren = rpc.MessageStream();
                                 var requestChildren = new kaspad.KaspadMessage();
                                 requestChildren.GetBlockRequest = new kaspad.GetBlockRequestMessage
                                 {
                                     Hash = childrenHash,
                                     IncludeTransactions = true,
                                 };
-                                await streamChildren.RequestStream.WriteAsync(requestChildren);
-                                await Guard(() => streamChildren.RequestStream.WriteAsync(requestChildren),
+                                await Guard(() => stream.RequestStream.WriteAsync(requestChildren),
                                     ex=> logger.Debug(ex));
-                                await foreach (var responseChildren in streamChildren.ResponseStream.ReadAllAsync())
+                                await foreach (var responseChildren in stream.ResponseStream.ReadAllAsync(ct))
                                 {
                                     // we only need the transaction(s) related to the block reward
                                     var childrenBlockRewardTransactions = responseChildren.GetBlockResponse.Block.Transactions
@@ -252,7 +245,6 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
 
                                     break;
                                 }
-                                await streamChildren.RequestStream.CompleteAsync();
                             }
                             
                             // Hold on, we still have one more thing to check
@@ -311,9 +303,9 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                     }
                     break;
                 }
-                await stream.RequestStream.CompleteAsync();
             }
         }
+        await stream.RequestStream.CompleteAsync();
 
         return result.ToArray();
     }
@@ -348,6 +340,7 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
         var callGetBalance = walletRpc.GetBalanceAsync(new kaspaWalletd.GetBalanceRequest());
         var walletBalances = await Guard(() => callGetBalance.ResponseAsync,
             ex=> logger.Debug(ex));
+        callGetBalance.Dispose();
         
         var walletBalancePending = (decimal) (walletBalances?.Pending == null ? 0 : walletBalances?.Pending) / KaspaConstants.SmallestUnit;
         var walletBalanceAvailable = (decimal) (walletBalances?.Available == null ? 0 : walletBalances?.Available) / KaspaConstants.SmallestUnit;
@@ -389,6 +382,7 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                 });
                 var sendTransaction = await Guard(() => callSend.ResponseAsync,
                     ex=> throw new PaymentException($"[{transferId}] kaspawalletd returned error: {ex}"));
+                callSend.Dispose();
 
                 // check result
                 var txId = sendTransaction.TxIDs.First();

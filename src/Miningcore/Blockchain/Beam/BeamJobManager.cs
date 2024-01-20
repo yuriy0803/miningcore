@@ -157,6 +157,7 @@ public class BeamJobManager : JobManagerBase<BeamJob>
 
                             logger.Debug(() => $"No more data received. Bye!");
                             client.Shutdown(SocketShutdown.Both);
+                            client.Close();
                         }
 
                         catch(OperationCanceledException)

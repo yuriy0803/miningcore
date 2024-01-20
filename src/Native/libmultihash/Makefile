@@ -16,7 +16,8 @@ OBJECTS = bcrypt.o blake.o c11.o dcrypt.o fresh.o lane.o \
 	shavite3.o skein.o skein2.o x11.o x13.o x15.o x17.o x16r.o x16rv2.o x16s.o x21s.o x22i.o \
 	blake2/sse/blake2s.o blake2/sse/blake2b.o \
         blake3/blake3.o blake3/blake3_dispatch.o blake3/blake3_portable.o \
-        blake3/blake3_sse41_x86-64_unix.o blake3/blake3_avx2_x86-64_unix.o blake3/blake3_avx512_x86-64_unix.o \
+        blake3/blake3_sse2_x86-64_unix.o blake3/blake3_sse41_x86-64_unix.o blake3/blake3_avx2_x86-64_unix.o \
+        blake3/blake3_avx512_x86-64_unix.o \
 	Lyra2.o Lyra2RE.o Sponge.o geek.o  \
 	heavyhash/heavyhash.o heavyhash/keccak_tiny.o \
 	verthash/tiny_sha3/sha3.o verthash/h2.o \

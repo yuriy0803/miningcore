@@ -74,7 +74,7 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
                             int port = extraDaemonEndpoint.MinerApiPort;
                             IPAddress[] iPAddress = await Dns.GetHostAddressesAsync(endPoint.Host, AddressFamily.InterNetwork, cts.Token);
                             IPEndPoint ipEndPoint = new IPEndPoint(iPAddress.First(), port);
-                            using Socket client = new(SocketType.Stream, ProtocolType.Tcp);
+                            using Socket client = new Socket(SocketType.Stream, ProtocolType.Tcp);
                             client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
                             client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 1);
                             client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 1);
@@ -218,6 +218,7 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
 
                             logger.Debug(() => $"No more data received. Bye!");
                             client.Shutdown(SocketShutdown.Both);
+                            client.Close();
                         }
 
                         catch(OperationCanceledException)

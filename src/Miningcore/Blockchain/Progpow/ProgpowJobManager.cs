@@ -85,7 +85,7 @@ public class ProgpowJobManager : BitcoinJobManagerBase<ProgpowJob>
                 {
                     logger.Info(() => "Loading current light cache ...");
 
-                    await coin.ProgpowHasher.GetCacheAsync(logger, (int) blockTemplate.Response.Height);
+                    await coin.ProgpowHasher.GetCacheAsync(logger, (int) blockTemplate.Response.Height, ct);
 
                     logger.Info(() => "Loaded current light cache");
                     break;
@@ -132,7 +132,7 @@ public class ProgpowJobManager : BitcoinJobManagerBase<ProgpowJob>
 
                 var blockHeight = blockTemplate?.Height ?? currentJob.BlockTemplate.Height;
 
-                var progpowHasher = await coin.ProgpowHasher.GetCacheAsync(logger, (int) blockHeight);
+                var progpowHasher = await coin.ProgpowHasher.GetCacheAsync(logger, (int) blockHeight, ct);
 
                 job.Init(blockTemplate, NextJobId(),
                     poolConfig, extraPoolConfig, clusterConfig, clock, poolAddressDestination, network, isPoS,

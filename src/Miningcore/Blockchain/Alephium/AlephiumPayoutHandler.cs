@@ -106,71 +106,14 @@ public class AlephiumPayoutHandler : PayoutHandlerBase,
             {
                 var block = page[j];
                 
-                // get block info
-                var blockInfo = await Guard(() => alephiumClient.HashAsync((string) block.Hash, ct),
-                    ex=> logger.Debug(ex));
-                
-                logger.Debug(() => $"[{LogCategory}] Block {block.BlockHeight} contains {blockInfo.Transactions.Count} transaction(s)");
-                
-                // get wallet miner's addresses
-                var walletMinersAddresses = await Guard(() => alephiumClient.GetMinersAddressesAsync(ct),
-                    ex=> logger.Debug(ex));
-                
-                // we only need the transaction(s) related to the block reward
-                var blockRewardTransactions = blockInfo.Transactions
-                    .Where(x => x.Unsigned.Inputs.Count < 1)
-                    .ToList();
-                
-                logger.Debug(() => $"[{LogCategory}] Block {block.BlockHeight} contains {blockRewardTransactions.Count} transaction(s) related to the block reward");
-                
-                // update real blockHeight from chain if necessary
-                //if (block.BlockHeight != blockInfo.Height)
-                    //block.BlockHeight = blockInfo.Height;
-                
-                // update progress
-                // Two block confirmations methods are available:
-                // 1) ALPH default lock mechanism: All of the mined coins are locked for N minutes (up to +8 hours on mainnet, very short on testnet)
-                // 2) Mining pool operator provides a custom block rewards lock time, this method must be ONLY USE ON TESTNET in order to mimic MAINNET
-                if(extraPoolPaymentProcessingConfig?.BlockRewardsLockTime == null)
-                {
-                    logger.Info(() => $"[{LogCategory}] Block {block.BlockHeight} uses the default block reward lock mechanism for minimum confirmations calculation");
-                    
-                    decimal transactionsLockTime = 0;
-                    int totalTransactionsLockTime = 0;
-                    foreach (var blockTransactionLockTime in blockRewardTransactions)
-                    {
-                        foreach (var unsignedLockTimeFixedOutputs in blockTransactionLockTime.Unsigned.FixedOutputs)
-                        {
-                            // We only need the transaction(s) for our wallet miner's addresses
-                            if(walletMinersAddresses.Addresses.Contains(unsignedLockTimeFixedOutputs.Address))
-                            {
-                                transactionsLockTime += (decimal) unsignedLockTimeFixedOutputs.LockTime;
-                                totalTransactionsLockTime += 1;
-                            }
-                        }
-                    }
-                    if(totalTransactionsLockTime > 0)
-                        transactionsLockTime /= totalTransactionsLockTime;
-                    
-                    block.ConfirmationProgress = Math.Min(1.0d, (double) ((AlephiumUtils.UnixTimeStampForApi(clock.Now) - blockInfo.Timestamp) / (transactionsLockTime - blockInfo.Timestamp)));
-                }
-                else
-                {
-                    logger.Info(() => $"[{LogCategory}] Block {block.BlockHeight} uses a custom [{network}] block rewards lock time: [{extraPoolPaymentProcessingConfig?.BlockRewardsLockTime}] minute(s)");
-                    
-                    block.ConfirmationProgress = Math.Min(1.0d, (double) ((AlephiumUtils.UnixTimeStampForApi(clock.Now) - blockInfo.Timestamp) / ((decimal) extraPoolPaymentProcessingConfig?.BlockRewardsLockTime * 60 * 1000)));
-                }
-                
-                result.Add(block);
-
-                messageBus.NotifyBlockConfirmationProgress(poolConfig.Id, block, coin);
-                
                 var isBlockInMainChain = await Guard(() => alephiumClient.GetBlockflowIsBlockInMainChainAsync((string) block.Hash, ct),
                     ex=> logger.Debug(ex));
-                
+
                 // We lost that battle
                 if(!isBlockInMainChain)
                 {
+                    result.Add(block);
+                    
                     block.Status = BlockStatus.Orphaned;
                     block.Reward = 0;
                     
@@ -179,28 +122,89 @@ public class AlephiumPayoutHandler : PayoutHandlerBase,
                     messageBus.NotifyBlockUnlocked(poolConfig.Id, block, coin);
                     continue;
                 }
-                
-                // matured and spendable?
-                if(block.ConfirmationProgress >= 1)
+                else
                 {
-                    block.Status = BlockStatus.Confirmed;
-                    block.ConfirmationProgress = 1;
+                    // get block info
+                    var blockInfo = await Guard(() => alephiumClient.HashAsync((string) block.Hash, ct),
+                        ex=> logger.Debug(ex));
 
-                    // reset block reward
-                    block.Reward = 0;
+                    logger.Debug(() => $"[{LogCategory}] Block {block.BlockHeight} contains {blockInfo.Transactions.Count} transaction(s)");
 
-                    foreach (var blockTransaction in blockRewardTransactions)
+                    // get wallet miner's addresses
+                    var walletMinersAddresses = await Guard(() => alephiumClient.GetMinersAddressesAsync(ct),
+                        ex=> logger.Debug(ex));
+
+                    // we only need the transaction(s) related to the block reward
+                    var blockRewardTransactions = blockInfo.Transactions
+                        .Where(x => x.Unsigned.Inputs.Count < 1)
+                        .ToList();
+
+                    logger.Debug(() => $"[{LogCategory}] Block {block.BlockHeight} contains {blockRewardTransactions.Count} transaction(s) related to the block reward");
+
+                    // update real blockHeight from chain if necessary
+                    //if (block.BlockHeight != blockInfo.Height)
+                        //block.BlockHeight = blockInfo.Height;
+
+                    // update progress
+                    // Two block confirmations methods are available:
+                    // 1) ALPH default lock mechanism: All of the mined coins are locked for N minutes (up to +8 hours on mainnet, very short on testnet)
+                    // 2) Mining pool operator provides a custom block rewards lock time, this method must be ONLY USE ON TESTNET in order to mimic MAINNET
+                    if(extraPoolPaymentProcessingConfig?.BlockRewardsLockTime == null)
                     {
-                        foreach (var unsignedFixedOutputs in blockTransaction.Unsigned.FixedOutputs)
+                        logger.Info(() => $"[{LogCategory}] Block {block.BlockHeight} uses the default block reward lock mechanism for minimum confirmations calculation");
+
+                        decimal transactionsLockTime = 0;
+                        int totalTransactionsLockTime = 0;
+                        foreach (var blockTransactionLockTime in blockRewardTransactions)
                         {
-                            // We only need the transaction(s) for our wallet miner's addresses
-                            if(walletMinersAddresses.Addresses.Contains(unsignedFixedOutputs.Address))
-                                block.Reward += AlephiumUtils.ConvertNumberFromApi(unsignedFixedOutputs.AttoAlphAmount) / AlephiumConstants.SmallestUnit;
+                            foreach (var unsignedLockTimeFixedOutputs in blockTransactionLockTime.Unsigned.FixedOutputs)
+                            {
+                                // We only need the transaction(s) for our wallet miner's addresses
+                                if(walletMinersAddresses.Addresses.Contains(unsignedLockTimeFixedOutputs.Address))
+                                {
+                                    transactionsLockTime += (decimal) unsignedLockTimeFixedOutputs.LockTime;
+                                    totalTransactionsLockTime += 1;
+                                }
+                            }
                         }
+                        if(totalTransactionsLockTime > 0)
+                            transactionsLockTime /= totalTransactionsLockTime;
+
+                        block.ConfirmationProgress = Math.Min(1.0d, (double) ((AlephiumUtils.UnixTimeStampForApi(clock.Now) - blockInfo.Timestamp) / (transactionsLockTime - blockInfo.Timestamp)));
                     }
-                    
-                    logger.Info(() => $"[{LogCategory}] Unlocked block {block.BlockHeight} worth {FormatAmount(block.Reward)}");
-                    messageBus.NotifyBlockUnlocked(poolConfig.Id, block, coin);
+                    else
+                    {
+                        logger.Info(() => $"[{LogCategory}] Block {block.BlockHeight} uses a custom [{network}] block rewards lock time: [{extraPoolPaymentProcessingConfig?.BlockRewardsLockTime}] minute(s)");
+
+                        block.ConfirmationProgress = Math.Min(1.0d, (double) ((AlephiumUtils.UnixTimeStampForApi(clock.Now) - blockInfo.Timestamp) / ((decimal) extraPoolPaymentProcessingConfig?.BlockRewardsLockTime * 60 * 1000)));
+                    }
+
+                    result.Add(block);
+
+                    messageBus.NotifyBlockConfirmationProgress(poolConfig.Id, block, coin);
+
+                    // matured and spendable?
+                    if(block.ConfirmationProgress >= 1)
+                    {
+                        block.Status = BlockStatus.Confirmed;
+                        block.ConfirmationProgress = 1;
+
+                        // reset block reward
+                        block.Reward = 0;
+
+                        foreach (var blockTransaction in blockRewardTransactions)
+                        {
+                            foreach (var unsignedFixedOutputs in blockTransaction.Unsigned.FixedOutputs)
+                            {
+                                // We only need the transaction(s) for our wallet miner's addresses
+                                if(walletMinersAddresses.Addresses.Contains(unsignedFixedOutputs.Address))
+                                    block.Reward += AlephiumUtils.ConvertNumberFromApi(unsignedFixedOutputs.AttoAlphAmount) / AlephiumConstants.SmallestUnit;
+                            }
+                        }
+
+                        logger.Info(() => $"[{LogCategory}] Unlocked block {block.BlockHeight} worth {FormatAmount(block.Reward)}");
+                        messageBus.NotifyBlockUnlocked(poolConfig.Id, block, coin);
+                    }
                 }
             }
         }
