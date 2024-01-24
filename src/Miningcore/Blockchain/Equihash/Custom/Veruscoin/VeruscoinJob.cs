@@ -197,7 +197,7 @@ public class VeruscoinJob : EquihashJob
 
                 // serialize (simulated) input transaction
                 bs.ReadWriteAsVarInt(ref txInputCount);
-                bs.ReadWrite(ref sha256Empty);
+                bs.ReadWrite(sha256Empty);
                 bs.ReadWrite(ref coinbaseIndex);
                 // bs.ReadWrite(ref serializedBlockHeightBytes);
                 bs.ReadWrite(ref script);
@@ -205,7 +205,7 @@ public class VeruscoinJob : EquihashJob
 
                 // serialize output transaction
                 var txOutBytes = SerializeOutputTransaction(txOut);
-                bs.ReadWrite(ref txOutBytes);
+                bs.ReadWrite(txOutBytes);
 
                 // misc
                 bs.ReadWrite(ref txLockTime);
@@ -269,7 +269,7 @@ public class VeruscoinJob : EquihashJob
 
                 bs.ReadWrite(ref amount);
                 bs.ReadWriteAsVarInt(ref rawLength);
-                bs.ReadWrite(ref raw);
+                bs.ReadWrite(raw);
             }
 
             // serialize witness (segwit)
@@ -281,7 +281,7 @@ public class VeruscoinJob : EquihashJob
 
                 bs.ReadWrite(ref amount);
                 bs.ReadWriteAsVarInt(ref rawLength);
-                bs.ReadWrite(ref raw);
+                bs.ReadWrite(raw);
             }
 
             return stream.ToArray();
@@ -311,8 +311,8 @@ public class VeruscoinJob : EquihashJob
         {
             var bs = new BitcoinStream(stream, true);
 
-            bs.ReadWrite(ref header);
-            bs.ReadWrite(ref solution);
+            bs.ReadWrite(header);
+            bs.ReadWrite(solution);
             
             /* var txCount = transactionCount.ToString();
             if (Math.Abs(txCount.Length % 2) == 1)
@@ -341,8 +341,8 @@ public class VeruscoinJob : EquihashJob
             } */
             
             bs.ReadWriteAsVarInt(ref transactionCount);
-            bs.ReadWrite(ref coinbase);
-            bs.ReadWrite(ref rawTransactionBuffer);
+            bs.ReadWrite(coinbase);
+            bs.ReadWrite(rawTransactionBuffer);
 
             return stream.ToArray();
         }

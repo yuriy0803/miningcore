@@ -43,7 +43,7 @@ public class PPLNSPaymentScheme : IPayoutScheme
     private readonly IBlockRepository blockRepo;
     private readonly IConnectionFactory cf;
     private readonly IShareRepository shareRepo;
-    private static readonly ILogger logger = LogManager.GetLogger("PPLNS Payment", typeof(PPLNSPaymentScheme));
+    private static readonly ILogger logger = LogManager.GetLogger("PPLNS Payment");
 
     private const int RetryCount = 4;
     private IAsyncPolicy shareReadFaultPolicy;

@@ -355,6 +355,11 @@ public class AlephiumPool : PoolBase
                     break;
             }
         }
+        
+        catch(AlephiumStratumException ex)
+        {
+            await connection.RespondAsync(new JsonRpcResponse(new JsonRpcError((int) ex.Code, ex.Message, null), request.Id, false));
+        }
 
         catch(StratumException ex)
         {

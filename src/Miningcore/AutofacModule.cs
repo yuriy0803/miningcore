@@ -61,9 +61,12 @@ public class AutofacModule : Module
             .SingleInstance();
 
         builder.RegisterInstance(new RecyclableMemoryStreamManager
-        {
-            ThrowExceptionOnToArray = true
-        });
+        (
+            new RecyclableMemoryStreamManager.Options
+            {
+                ThrowExceptionOnToArray = true
+            }
+        ));
 
         builder.RegisterType<StandardClock>()
             .AsImplementedInterfaces()

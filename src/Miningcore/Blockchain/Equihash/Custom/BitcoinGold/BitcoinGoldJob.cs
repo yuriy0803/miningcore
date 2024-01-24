@@ -48,14 +48,14 @@ public class BitcoinGoldJob : EquihashJob
 
             // serialize (simulated) input transaction
             bs.ReadWriteAsVarInt(ref txInputCount);
-            bs.ReadWrite(ref sha256Empty);
+            bs.ReadWrite(sha256Empty);
             bs.ReadWrite(ref coinbaseIndex);
             bs.ReadWrite(ref script);
             bs.ReadWrite(ref coinbaseSequence);
 
             // serialize output transaction
             var txOutBytes = SerializeOutputTransaction(txOut);
-            bs.ReadWrite(ref txOutBytes);
+            bs.ReadWrite(txOutBytes);
 
             // misc
             bs.ReadWrite(ref txLockTime);
@@ -95,7 +95,7 @@ public class BitcoinGoldJob : EquihashJob
 
                 bs.ReadWrite(ref amount);
                 bs.ReadWriteAsVarInt(ref rawLength);
-                bs.ReadWrite(ref raw);
+                bs.ReadWrite(raw);
             }
 
             // serialize outputs
@@ -108,7 +108,7 @@ public class BitcoinGoldJob : EquihashJob
 
                 bs.ReadWrite(ref amount);
                 bs.ReadWriteAsVarInt(ref rawLength);
-                bs.ReadWrite(ref raw);
+                bs.ReadWrite(raw);
             }
 
             return stream.ToArray();

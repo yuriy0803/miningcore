@@ -107,12 +107,12 @@ public class BitcoinJob
 
             // serialize (simulated) input transaction
             bs.ReadWriteAsVarInt(ref txInputCount);
-            bs.ReadWrite(ref sha256Empty);
+            bs.ReadWrite(sha256Empty);
             bs.ReadWrite(ref txInPrevOutIndex);
 
             // signature script initial part
             bs.ReadWriteAsVarInt(ref sigScriptLength);
-            bs.ReadWrite(ref sigScriptInitialBytes);
+            bs.ReadWrite(sigScriptInitialBytes);
 
             // done
             coinbaseInitial = stream.ToArray();
@@ -125,14 +125,14 @@ public class BitcoinJob
             var bs = new BitcoinStream(stream, true);
 
             // signature script final part
-            bs.ReadWrite(ref scriptSigFinalBytes);
+            bs.ReadWrite(scriptSigFinalBytes);
 
             // tx in sequence
             bs.ReadWrite(ref txInSequence);
 
             // serialize output transaction
             var txOutBytes = SerializeOutputTransaction(txOut);
-            bs.ReadWrite(ref txOutBytes);
+            bs.ReadWrite(txOutBytes);
 
             // misc
             bs.ReadWrite(ref txLockTime);
@@ -189,7 +189,7 @@ public class BitcoinJob
 
                 bs.ReadWrite(ref amount);
                 bs.ReadWriteAsVarInt(ref rawLength);
-                bs.ReadWrite(ref raw);
+                bs.ReadWrite(raw);
             }
 
             // serialize outputs
@@ -202,7 +202,7 @@ public class BitcoinJob
 
                 bs.ReadWrite(ref amount);
                 bs.ReadWriteAsVarInt(ref rawLength);
-                bs.ReadWrite(ref raw);
+                bs.ReadWrite(raw);
             }
 
             return stream.ToArray();
@@ -400,11 +400,11 @@ public class BitcoinJob
         {
             var bs = new BitcoinStream(stream, true);
 
-            bs.ReadWrite(ref header);
+            bs.ReadWrite(header);
             bs.ReadWriteAsVarInt(ref transactionCount);
 
-            bs.ReadWrite(ref coinbase);
-            bs.ReadWrite(ref rawTransactionBuffer);
+            bs.ReadWrite(coinbase);
+            bs.ReadWrite(rawTransactionBuffer);
 
             // POS coins require a zero byte appended to block which the daemon replaces with the signature
             if(isPoS)
@@ -418,8 +418,8 @@ public class BitcoinJob
                 var mweb = BlockTemplate.Extra.SafeExtensionDataAs<MwebBlockTemplateExtra>();
                 var mwebRaw = mweb.Mweb.HexToByteArray();
 
-                bs.ReadWrite(ref separator);
-                bs.ReadWrite(ref mwebRaw);
+                bs.ReadWrite(separator);
+                bs.ReadWrite(mwebRaw);
             }
 
             return stream.ToArray();

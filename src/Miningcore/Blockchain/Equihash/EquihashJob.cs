@@ -216,11 +216,11 @@ public class EquihashJob
         {
             var bs = new BitcoinStream(stream, true);
 
-            bs.ReadWrite(ref header);
-            bs.ReadWrite(ref solution);
+            bs.ReadWrite(header);
+            bs.ReadWrite(solution);
             bs.ReadWriteAsVarInt(ref transactionCount);
-            bs.ReadWrite(ref coinbase);
-            bs.ReadWrite(ref rawTransactionBuffer);
+            bs.ReadWrite(coinbase);
+            bs.ReadWrite(rawTransactionBuffer);
 
             return stream.ToArray();
         }

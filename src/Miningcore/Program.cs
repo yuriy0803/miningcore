@@ -780,8 +780,10 @@ public class Program : BackgroundService
         var rmsm = services.GetService<RecyclableMemoryStreamManager>();
 
         // Configure RecyclableMemoryStream
-        rmsm.MaximumFreeSmallPoolBytes = clusterConfig.Memory?.RmsmMaximumFreeSmallPoolBytes ?? 0x100000;   // 1 MB
-        rmsm.MaximumFreeLargePoolBytes = clusterConfig.Memory?.RmsmMaximumFreeLargePoolBytes ?? 0x800000;   // 8 MB
+        var rmsmOptions = rmsm.Settings;
+        rmsmOptions.MaximumSmallPoolFreeBytes = clusterConfig.Memory?.RmsmMaximumFreeSmallPoolBytes ?? 0x100000;   // 1 MB
+        rmsmOptions.MaximumLargePoolFreeBytes = clusterConfig.Memory?.RmsmMaximumFreeLargePoolBytes ?? 0x800000;   // 8 MB
+        rmsm = new RecyclableMemoryStreamManager(rmsmOptions);
 
         // Configure Equihash
         EquihashSolver.messageBus = messageBus;
