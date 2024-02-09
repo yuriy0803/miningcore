@@ -378,6 +378,7 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
                     ToAddress = address.ToLower(),
                     Amount = (ulong) (amount * KaspaConstants.SmallestUnit),
                     Password = extraPoolPaymentProcessingConfig?.WalletPassword ?? null,
+                    UseExistingChangeAddress = true,
                     IsSendAll = false,
                 });
                 var sendTransaction = await Guard(() => callSend.ResponseAsync,
@@ -424,12 +425,12 @@ public class KaspaPayoutHandler : PayoutHandlerBase,
     
     public override double AdjustShareDifficulty(double difficulty)
     {
-        return difficulty * KaspaConstants.Pow2xDiff1TargetNumZero * (double) KaspaConstants.MinHash;
+        return difficulty * KaspaConstants.Pow2xDiff1TargetNumZero;
     }
 
     public double AdjustBlockEffort(double effort)
     {
-        return effort * KaspaConstants.Pow2xDiff1TargetNumZero * (double) KaspaConstants.MinHash;
+        return effort * KaspaConstants.Pow2xDiff1TargetNumZero;
     }
     
     #endregion // IPayoutHandler

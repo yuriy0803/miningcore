@@ -64,9 +64,20 @@ public class KaspaJob
     private object[] jobParams;
     private readonly ConcurrentDictionary<string, bool> submissions = new(StringComparer.OrdinalIgnoreCase);
 
-    protected IHashAlgorithm blockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
-    protected IHashAlgorithm coinbaseHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseProofOfWorkHash));
-    protected IHashAlgorithm shareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+    protected IHashAlgorithm blockHeaderHasher;
+    protected IHashAlgorithm coinbaseHasher;
+    protected IHashAlgorithm shareHasher;
+
+    public KaspaJob(IHashAlgorithm customBlockHeaderHasher, IHashAlgorithm customCoinbaseHasher, IHashAlgorithm customShareHasher)
+    {
+        Contract.RequiresNonNull(customBlockHeaderHasher);
+        Contract.RequiresNonNull(customCoinbaseHasher);
+        Contract.RequiresNonNull(customShareHasher);
+
+        this.blockHeaderHasher = customBlockHeaderHasher;
+        this.coinbaseHasher = customCoinbaseHasher;
+        this.shareHasher = customShareHasher;
+    }
     
     protected bool RegisterSubmit(string nonce)
     {
@@ -357,7 +368,7 @@ public class KaspaJob
         
         JobId = jobId;
         var target = new Target(KaspaUtils.CompactToBig(blockTemplate.Header.Bits));
-        Difficulty = KaspaUtils.TargetToDifficulty(target.ToBigInteger()) / KaspaConstants.ShareMultiplier;
+        Difficulty = KaspaUtils.TargetToDifficulty(target.ToBigInteger()) * (double) KaspaConstants.MinHash / KaspaConstants.ShareMultiplier;
         blockTargetValue = target.ToUInt256();
         BlockTemplate = blockTemplate;
         

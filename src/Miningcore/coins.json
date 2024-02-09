@@ -2429,6 +2429,36 @@
         "explorerTxLink": "https://explorer.aipowergrid.io/tx/{0}",
         "explorerAccountLink": "https://explorer.aipowergrid.io/address/{0}"
     },
+    "satoxcoin": {
+        "name": "SatoxCoin",
+        "symbol": "SATOX",
+        "family": "progpow",
+        "website": "https://www.satoverse.io/",
+        "market": "https://coinpaprika.com/coin/satox-satox-coin",
+        "twitter": "https://twitter.com/Satoverse_io",
+        "telegram": "https://t.me/satoxcoin",
+        "discord": "https://discord.com/invite/GFZYFuuHVq",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasCommunityAddress": true,
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://xplore.satoverse.io/block/$hash$",
+        "explorerTxLink": "https://xplore.satoverse.io/tx/{0}",
+        "explorerAccountLink": "https://xplore.satoverse.io/address/{0}"
+    },
     "novo": {
       "name": "Novo",
       "symbol": "NOVO",

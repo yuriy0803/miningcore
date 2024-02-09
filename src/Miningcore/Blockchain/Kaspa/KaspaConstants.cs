@@ -64,6 +64,8 @@ public static class KarlsencoinConstants
     public const string ChainPrefixSimnet = "karlsensim";
     public const string ChainPrefixTestnet = "karlsentest";
     public const string ChainPrefixMainnet = "karlsen";
+    
+    public const long FishHashForkHeightTestnet = 0;
 }
 
 public static class PyrinConstants

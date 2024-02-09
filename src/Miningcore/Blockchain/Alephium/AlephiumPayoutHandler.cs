@@ -512,7 +512,7 @@ public class AlephiumPayoutHandler : PayoutHandlerBase,
                     if(string.IsNullOrEmpty(txBuild?.TxId))
                         continue;
 
-                    logger.Debug(() => $"[{LogCategory}] Unsigned transaction {txBuild.UnsignedTx} with txId {txBuild.TxId}");
+                    logger.Info(() => $"[{LogCategory}] Unsigned transaction {txBuild.UnsignedTx} with txId {txBuild.TxId}");
 
                     logger.Info(() => $"[{LogCategory}] 2/3) Sign the transaction");
                     signTxBuild = new Sign
@@ -527,7 +527,7 @@ public class AlephiumPayoutHandler : PayoutHandlerBase,
                     if(string.IsNullOrEmpty(txSign?.Signature))
                         continue;
 
-                    logger.Debug(() => $"[{LogCategory}] Unsigned transaction signature {txSign.Signature}");
+                    logger.Info(() => $"[{LogCategory}] Unsigned transaction signature {txSign.Signature}");
 
                     logger.Info(() => $"[{LogCategory}] 3/3) Submit signed transaction to the network");
                     submitTxSign = new SubmitSettlement

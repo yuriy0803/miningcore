@@ -250,9 +250,20 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                                 
                                 block.Hash = uncle.Hash;
                                 block.Reward = GetUncleReward(chainType, uncle.Height.Value, blockInfo2.Height.Value);
-                                block.Status = BlockStatus.Confirmed;
-                                block.ConfirmationProgress = 1;
-                                block.BlockHeight = uncle.Height.Value;
+
+                                // There is a rare case-scenario where an Uncle has a block reward of zero
+                                // We must handle it carefully otherwise payout will be stuck forever
+                                if(block.Reward > 0)
+                                {
+                                    block.Status = BlockStatus.Confirmed;
+                                    block.ConfirmationProgress = 1;
+                                    block.BlockHeight = uncle.Height.Value;
+                                }
+                                else
+                                {
+                                    block.Status = BlockStatus.Orphaned;
+                                }
+
                                 block.Type = EthereumConstants.BlockTypeUncle;
 
                                 logger.Info(() => $"[{LogCategory}] Unlocked uncle for block {blockInfo2.Height.Value} at height {uncle.Height.Value} worth {FormatAmount(block.Reward)}");

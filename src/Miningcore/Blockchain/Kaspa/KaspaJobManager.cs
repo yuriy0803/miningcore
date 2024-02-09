@@ -17,6 +17,8 @@ using Miningcore.Blockchain.Kaspa.Custom.Karlsencoin;
 using Miningcore.Blockchain.Kaspa.Custom.Pyrin;
 using NLog;
 using Miningcore.Configuration;
+using Miningcore.Crypto;
+using Miningcore.Crypto.Hashing.Algorithms;
 using Miningcore.Extensions;
 using Miningcore.Messaging;
 using Miningcore.Mining;
@@ -60,6 +62,9 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
     private KaspaPaymentProcessingConfigExtra extraPoolPaymentProcessingConfig;
     protected int maxActiveJobs;
     protected string extraData;
+    protected IHashAlgorithm customBlockHeaderHasher;
+    protected IHashAlgorithm customCoinbaseHasher;
+    protected IHashAlgorithm customShareHasher;
     
     protected IObservable<kaspad.RpcBlock> KaspaSubscribeNewBlockTemplate(CancellationToken ct, object payload = null,
         JsonSerializerSettings payloadJsonSerializerSettings = null)
@@ -89,8 +94,28 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                         };
 
                         logger.Debug(() => $"Sending NotifyNewBlockTemplateRequest");
-                        await streamNotifyNewBlockTemplate.RequestStream.WriteAsync(requestNotifyNewBlockTemplate, cts.Token);
-                        while (!cts.IsCancellationRequested && await streamNotifyNewBlockTemplate.ResponseStream.MoveNext())
+
+                        try
+                        {
+                            await streamNotifyNewBlockTemplate.RequestStream.WriteAsync(requestNotifyNewBlockTemplate, cts.Token);
+                        }
+                        catch(Exception ex)
+                        {
+                            logger.Error(() => $"{ex.GetType().Name} '{ex.Message}' while subscribing to kaspad \"NewBlockTemplate\" notifications");
+
+                            if(!cts.IsCancellationRequested)
+                            {
+                                // We make sure the stream is closed in order to free resources and avoid reaching the "RPC inbound connections limitation"
+                                await streamNotifyNewBlockTemplate.RequestStream.CompleteAsync();
+                                logger.Error(() => $"Reconnecting in 10s");
+                                await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
+                                goto retry_subscription;
+                            }
+                            else
+                                goto end_gameover;
+                        }
+
+                        while (!cts.IsCancellationRequested)
                         {
                             logger.Debug(() => $"Successful `NewBlockTemplate` subscription");
 
@@ -112,14 +137,6 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                                             logger.Warn(() => responseBlockTemplate.GetBlockTemplateResponse.Error?.Message);
                                     }
                                 }
-                                catch(OperationCanceledException)
-                                {
-                                    // We make sure the stream is closed in order to free resources and avoid reaching the "RPC inbound connections limitation"
-                                    await streamNotifyNewBlockTemplate.RequestStream.CompleteAsync();
-                                    // We also need to get out of here
-                                    break;
-                                }
-
                                 catch(NullReferenceException)
                                 {
                                     // The following is weird but correct, when all data has been received `streamNotifyNewBlockTemplate.ResponseStream.ReadAllAsync()` will return a `NullReferenceException`
@@ -129,16 +146,25 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
 
                                 catch(Exception ex)
                                 {
-                                    // We make sure the stream is closed in order to free resources and avoid reaching the "RPC inbound connections limitation"
-                                    await streamNotifyNewBlockTemplate.RequestStream.CompleteAsync();
-                                    logger.Error(() => $"{ex.GetType().Name} '{ex.Message}' while streaming kaspad \"NewBlockTemplate\" notifications. Reconnecting in 10s");
-                                    await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
-                                    goto retry_subscription;
+                                    logger.Error(() => $"{ex.GetType().Name} '{ex.Message}' while streaming kaspad \"NewBlockTemplate\" notifications");
+
+                                    if(!cts.IsCancellationRequested)
+                                    {
+                                        // We make sure the stream is closed in order to free resources and avoid reaching the "RPC inbound connections limitation"
+                                        await streamNotifyNewBlockTemplate.RequestStream.CompleteAsync();
+                                        logger.Error(() => $"Reconnecting in 10s");
+                                        await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
+                                        goto retry_subscription;
+                                    }
+                                    else
+                                        goto end_gameover;
                                 }
                         }
-                        // We make sure the stream is closed in order to free resources and avoid reaching the "RPC inbound connections limitation"
-                        await streamNotifyNewBlockTemplate.RequestStream.CompleteAsync();
-                        logger.Debug(() => $"No more data received. Bye!");
+                        
+                        end_gameover:
+                            // We make sure the stream is closed in order to free resources and avoid reaching the "RPC inbound connections limitation"
+                            await streamNotifyNewBlockTemplate.RequestStream.CompleteAsync();
+                            logger.Debug(() => $"No more data received. Bye!");
                 }
             }, cts.Token);
             
@@ -190,16 +216,76 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
         switch(coin.Symbol)
         {
             case "KLS":
-                return new KarlsencoinJob();
+                var karlsenNetwork = network.ToLower();
 
+                if(customBlockHeaderHasher is not Blake2b)
+                    customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+
+                if(customCoinbaseHasher is not Blake3)
+                    customCoinbaseHasher = new Blake3();
+
+                if ((karlsenNetwork == "testnet" && blockHeight >= KarlsencoinConstants.FishHashForkHeightTestnet))
+                {
+                    logger.Debug(() => $"fishHashHardFork activated");
+
+                    if(customShareHasher is not FishHash)
+                    {
+                        var started = DateTime.Now;
+                        logger.Debug(() => $"Generating light cache");
+
+                        customShareHasher = new FishHash();
+
+                        logger.Debug(() => $"Done generating light cache after {DateTime.Now - started}");
+                    }
+                }
+                else
+                    if(customShareHasher is not CShake256)
+                         customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+
+                return new KarlsencoinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
             case "PYI":
                 if(blockHeight >= PyrinConstants.Blake3ForkHeight)
+                {
                     logger.Debug(() => $"blake3HardFork activated");
 
-                return new PyrinJob(blockHeight);
-        }
+                    if(customBlockHeaderHasher is not Blake3)
+                    {
+                        string coinbaseBlockHash = KaspaConstants.CoinbaseBlockHash;
+                        byte[] hashBytes = Encoding.UTF8.GetBytes(coinbaseBlockHash.PadRight(32, '\0')).Take(32).ToArray();
+                        customBlockHeaderHasher = new Blake3(hashBytes);
+                    }
 
-        return new KaspaJob();
+                    if(customCoinbaseHasher is not Blake3)
+                        customCoinbaseHasher = new Blake3();
+
+                    if(customShareHasher is not Blake3)
+                        customShareHasher = new Blake3();
+                }
+                else
+                {
+                    if(customBlockHeaderHasher is not Blake2b)
+                        customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+
+                    if(customCoinbaseHasher is not CShake256)
+                        customCoinbaseHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseProofOfWorkHash));
+
+                    if(customShareHasher is not CShake256)
+                        customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+                }
+
+                return new PyrinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
+        }
+        
+        if(customBlockHeaderHasher is not Blake2b)
+            customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+
+        if(customCoinbaseHasher is not CShake256)
+            customCoinbaseHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseProofOfWorkHash));
+
+        if(customShareHasher is not CShake256)
+            customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+
+        return new KaspaJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
     }
 
     private async Task<bool> UpdateJob(CancellationToken ct, string via = null, kaspad.RpcBlock blockTemplate = null)
