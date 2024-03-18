@@ -260,7 +260,11 @@ public partial class KaspaCoinTemplate
         {
             case "KLS":
                 return "Karlsenhash";
+            case "NTL":
+                return "Karlsenhash";
             case "PYI":
+                return "Pyrinhash";
+            case "HTN":
                 return "Pyrinhash";
             default:
                 // TODO: return variant

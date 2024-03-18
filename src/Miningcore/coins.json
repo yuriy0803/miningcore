@@ -2370,6 +2370,36 @@
         "explorerTxLink": "https://exploreblockchain.clore.ai/tx/{0}",
         "explorerAccountLink": "https://exploreblockchain.clore.ai/address/{0}"
     },
+    "anokas": {
+        "name": "Anokas",
+        "symbol": "ANOK",
+        "family": "progpow",
+        "website": "",
+        "market": "",
+        "twitter": "",
+        "telegram": "",
+        "discord": "https://discord.com/channels/1204231775589761104/1204231775589761107/1218168646548062249",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasCommunityAddress": true,
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://explorer.anokas.tech/block/$hash$",
+        "explorerTxLink": "https://explorer.anokas.tech/tx/{0}",
+        "explorerAccountLink": "https://explorer.anokas.tech/address/{0}"
+    },
     "meowcoin": {
         "name": "Meowcoin",
         "symbol": "MEWC",
@@ -4809,6 +4839,20 @@
         "explorerTxLink": "https://explorer.karlsencoin.com/txs/{0}",
         "explorerAccountLink": "https://explorer.karlsencoin.com/addresses/{0}"
     },
+    "nautilus": {
+        "name": "Nautilus",
+        "canonicalName": "Nautilus",
+        "symbol": "NTL",
+        "family": "kaspa",
+        "website": "https://nautilus-network.net/",
+        "market": "",
+        "twitter": "https://twitter.com/nautilusNTL",
+        "telegram": "",
+        "discord": "https://discord.com/invite/qWcUUgww4d",
+        "explorerBlockLink": "https://explorer.nautilus-network.net/blocks/$hash$",
+        "explorerTxLink": "https://explorer.nautilus-network.net/txs/{0}",
+        "explorerAccountLink": "https://explorer.nautilus-network.net/addresses/{0}"
+    },
     "pyrin": {
         "name": "Pyrin",
         "canonicalName": "Pyrin",
@@ -4822,5 +4866,83 @@
         "explorerBlockLink": "https://explorer.pyrin.network/blocks/$hash$",
         "explorerTxLink": "https://explorer.pyrin.network/txs/{0}",
         "explorerAccountLink": "https://explorer.pyrin.network/addresses/{0}"
+    },
+    "hoosat": {
+        "name": "Hoosat",
+        "canonicalName": "Hoosat",
+        "symbol": "HTN",
+        "family": "kaspa",
+        "website": "https://hoosat.fi",
+        "market": "",
+        "twitter": "https://x.com/Hoosatnetwork",
+        "telegram": "https://t.me/HoosatNetwork",
+        "discord": "https://discord.gg/NzENEkxEqY",
+        "explorerBlockLink": "https://explorer.hoosat.fi/blocks/$hash$",
+        "explorerTxLink": "https://explorer.hoosat.fi/txs/{0}",
+        "explorerAccountLink": "https://explorer.hoosat.fi/addresses/{0}"
+    },
+    "sciprotocol": {
+        "name": "Sciprotocol",
+        "canonicalName": "Sciprotocol",
+        "symbol": "SCI",
+        "family": "bitcoin",
+        "website": "sciprotocol.org",
+        "market": "",
+        "twitter": "",
+        "telegram": "https://t.me/sciprotocol",
+        "discord": "https://discord.gg/qJK3xDFUbb",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "ghostrider"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasFounderFee": true,
+        "hasMasterNodes": true,
+        "hasSmartNodes": true,
+        "shareMultiplier": 65536,
+        "explorerBlockLink": "https://explorer.sciprotocol.org/block/$height$",
+        "explorerTxLink": "https://explorer.sciprotocol.org/tx/{0}",
+        "explorerAccountLink": "https://explorer.sciprotocol.org/address/{0}"
+    },
+    "subi": {
+        "name": "Subi",
+        "canonicalName": "Subi",
+        "symbol": "SUBI",
+        "family": "bitcoin",
+        "website": "https://subinetwork.com/",
+        "market": "",
+        "twitter": "",
+        "telegram": "",
+        "discord": "https://discord.gg/nmaXNMg4RU",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "ghostrider"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasFounderFee": true,
+        "hasMasterNodes": true,
+        "hasSmartNodes": true,
+        "shareMultiplier": 65536,
+        "explorerBlockLink": "https://explorer.subinetwork.com/block/$height$",
+        "explorerTxLink": "https://explorer.subinetwork.com/tx/{0}",
+        "explorerAccountLink": "https://explorer.subinetwork.com/address/{0}"
     }
 }

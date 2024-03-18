@@ -68,6 +68,17 @@ public static class KarlsencoinConstants
     public const long FishHashForkHeightTestnet = 0;
 }
 
+public static class NautilusConstants
+{
+    // List of NTL prefixes: https://github.com/Nautilus-Network/nautiliad//blob/master/util/address.go
+    public const string ChainPrefixDevnet = "nautiliadev";
+    public const string ChainPrefixSimnet = "nautilussim";
+    public const string ChainPrefixTestnet = "nautilustest";
+    public const string ChainPrefixMainnet = "nautilus";
+    
+    public const long FishHashForkHeightTestnet = 0;
+}
+
 public static class PyrinConstants
 {
     // List of KLS prefixes: https://github.com/Pyrinpyi/pyipad/blob/master/util/address.go
@@ -75,6 +86,17 @@ public static class PyrinConstants
     public const string ChainPrefixSimnet = "pyrinsim";
     public const string ChainPrefixTestnet = "pyrintest";
     public const string ChainPrefixMainnet = "pyrin";
+    
+    public const long Blake3ForkHeight = 1484741;
+}
+
+public static class HoosatConstants
+{
+    // List of KLS prefixes: https://github.com/Hoosat-Oy/HTND/blob/master/util/address.go
+    public const string ChainPrefixDevnet = "htndev";
+    public const string ChainPrefixSimnet = "hoosatsim";
+    public const string ChainPrefixTestnet = "hoosattest";
+    public const string ChainPrefixMainnet = "hoosat";
     
     public const long Blake3ForkHeight = 1484741;
 }

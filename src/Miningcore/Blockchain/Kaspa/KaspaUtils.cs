@@ -364,6 +364,16 @@ public class KaspaAddressUtility
                 };
                 
                 break;
+            case "NTL":
+                this.stringsToBech32Prefixes = new Dictionary<string, KaspaBech32Prefix>
+                {
+                    { NautilusConstants.ChainPrefixMainnet, KaspaBech32Prefix.KaspaMain },
+                    { NautilusConstants.ChainPrefixDevnet, KaspaBech32Prefix.KaspaDev },
+                    { NautilusConstants.ChainPrefixTestnet, KaspaBech32Prefix.KaspaTest },
+                    { NautilusConstants.ChainPrefixSimnet, KaspaBech32Prefix.KaspaSim },
+                };
+                
+                break;
             case "PYI":
                 this.stringsToBech32Prefixes = new Dictionary<string, KaspaBech32Prefix>
                 {
@@ -371,6 +381,16 @@ public class KaspaAddressUtility
                     { PyrinConstants.ChainPrefixDevnet, KaspaBech32Prefix.KaspaDev },
                     { PyrinConstants.ChainPrefixTestnet, KaspaBech32Prefix.KaspaTest },
                     { PyrinConstants.ChainPrefixSimnet, KaspaBech32Prefix.KaspaSim },
+                };
+
+                break;
+            case "HTN":
+                this.stringsToBech32Prefixes = new Dictionary<string, KaspaBech32Prefix>
+                {
+                    { HoosatConstants.ChainPrefixMainnet, KaspaBech32Prefix.KaspaMain },
+                    { HoosatConstants.ChainPrefixDevnet, KaspaBech32Prefix.KaspaDev },
+                    { HoosatConstants.ChainPrefixTestnet, KaspaBech32Prefix.KaspaTest },
+                    { HoosatConstants.ChainPrefixSimnet, KaspaBech32Prefix.KaspaSim },
                 };
 
                 break;
