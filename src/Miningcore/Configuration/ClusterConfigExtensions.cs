@@ -264,6 +264,8 @@ public partial class KaspaCoinTemplate
                 return "Karlsenhash";
             case "PYI":
                 return "Pyrinhash";
+            case "CAS":
+                return "Pyrinhash";
             case "HTN":
                 return "Pyrinhash";
             default:
