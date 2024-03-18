@@ -74,7 +74,7 @@ public class PoolApiController : ApiControllerBase
                 if(lastBlockTime.HasValue)
                 {
                     var startTime = lastBlockTime.Value;
-                    var poolEffort = await cf.Run(con => shareRepo.GetEffortBetweenCreatedAsync(con, config.Id, startTime, clock.Now));
+                    var poolEffort = await cf.Run(con => shareRepo.GetEffortBetweenCreatedAsync(con, config.Id, pool.ShareMultiplier, startTime, clock.Now));
                     if(poolEffort.HasValue)
                         result.PoolEffort = poolEffort.Value;
                 }
@@ -143,7 +143,7 @@ public class PoolApiController : ApiControllerBase
         if(lastBlockTime.HasValue)
         {
             var startTime = lastBlockTime.Value;
-                        var poolEffort = await cf.Run(con => shareRepo.GetEffortBetweenCreatedAsync(con, pool.Id, startTime, clock.Now));
+            var poolEffort = await cf.Run(con => shareRepo.GetEffortBetweenCreatedAsync(con, pool.Id, poolInstance.ShareMultiplier, startTime, clock.Now));
             if(poolEffort.HasValue)
                 response.Pool.PoolEffort = poolEffort.Value;
         }
@@ -549,7 +549,7 @@ public class PoolApiController : ApiControllerBase
             address = address.ToLower();
         
         uint itemCount = await cf.Run(con => paymentsRepo.GetPaymentsCountAsync(con, poolId, address, ct));
-		uint pageCount = (uint) Math.Floor((await cf.Run(con => paymentsRepo.GetPaymentsCountAsync(con, poolId, address, ct))) / (double) pageSize);
+        uint pageCount = (uint) Math.Floor((await cf.Run(con => paymentsRepo.GetPaymentsCountAsync(con, poolId, address, ct))) / (double) pageSize);
 
         var payments = (await cf.Run(con => paymentsRepo.PagePaymentsAsync(
                 con, pool.Id, address, page, pageSize, ct)))

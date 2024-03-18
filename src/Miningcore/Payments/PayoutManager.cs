@@ -171,6 +171,7 @@ public class PayoutManager : BackgroundService
                     if(!block.MinerEffort.HasValue)  // fill block effort if empty
                         await CalculateMinerEffortAsync(pool, poolConfig, block, handler, ct);
 
+
                     switch(block.Status)
                     {
                         case BlockStatus.Confirmed:
