@@ -4881,6 +4881,20 @@
         "explorerTxLink": "https://explorer.hoosat.fi/txs/{0}",
         "explorerAccountLink": "https://explorer.hoosat.fi/addresses/{0}"
     },
+    "kaspaclassic": {
+        "name": "KaspaClassic",
+        "canonicalName": "KaspaClassic",
+        "symbol": "CAS",
+        "family": "kaspa",
+        "website": "https://kaspaclassic.com/",
+        "market": "",
+        "twitter": "https://twitter.com/kaspaclassic",
+        "telegram": "https://t.me/kaspaclassic",
+        "discord": "https://discord.com/invite/kaspaclassic1",
+        "explorerBlockLink": "https://explorer.kaspa-classic.online/blocks/$hash$",
+        "explorerTxLink": "https://explorer.kaspa-classic.online/txs/{0}",
+        "explorerAccountLink": "https://explorer.kaspa-classic.online/addresses/{0}"
+    },
     "sciprotocol": {
         "name": "Sciprotocol",
         "canonicalName": "Sciprotocol",
