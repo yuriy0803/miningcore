@@ -16,6 +16,7 @@ using Miningcore.Blockchain.Kaspa.Configuration;
 using Miningcore.Blockchain.Kaspa.Custom.Karlsencoin;
 using Miningcore.Blockchain.Kaspa.Custom.Nautilus;
 using Miningcore.Blockchain.Kaspa.Custom.Pyrin;
+using Miningcore.Blockchain.Kaspa.Custom.KaspaClassic;
 using Miningcore.Blockchain.Kaspa.Custom.Hoosat;
 using NLog;
 using Miningcore.Configuration;
@@ -305,6 +306,40 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                 }
 
                 return new PyrinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
+
+            case "CAS":
+                if(blockHeight >= KaspaClassicConstants.Blake3ForkHeight)
+                {
+                    logger.Debug(() => $"blake3HardFork activated");
+
+                    if(customBlockHeaderHasher is not Blake3)
+                    {
+                        string coinbaseBlockHash = KaspaConstants.CoinbaseBlockHash;
+                        byte[] hashBytes = Encoding.UTF8.GetBytes(coinbaseBlockHash.PadRight(32, '\0')).Take(32).ToArray();
+                        customBlockHeaderHasher = new Blake3(hashBytes);
+                    }
+
+                    if(customCoinbaseHasher is not Blake3)
+                        customCoinbaseHasher = new Blake3();
+
+                    if(customShareHasher is not Blake3)
+                        customShareHasher = new Blake3();
+                }
+                
+                else
+                {
+                    if(customBlockHeaderHasher is not Blake2b)
+                        customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+
+                    if(customCoinbaseHasher is not CShake256)
+                        customCoinbaseHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseProofOfWorkHash));
+
+                    if(customShareHasher is not CShake256)
+                        customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+                }
+
+                return new KaspaClassicJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
+
 
             case "HTN":
                 if(blockHeight >= HoosatConstants.Blake3ForkHeight)

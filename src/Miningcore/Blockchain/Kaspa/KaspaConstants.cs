@@ -90,6 +90,17 @@ public static class PyrinConstants
     public const long Blake3ForkHeight = 1484741;
 }
 
+public static class KaspaClassicConstants
+{
+    // List of KLS prefixes: https://github.com/kaspaclassic/caspad/blob/master/util/address.go
+    public const string ChainPrefixDevnet = "caspadev";
+    public const string ChainPrefixSimnet = "caspasim";
+    public const string ChainPrefixTestnet = "caspatest";
+    public const string ChainPrefixMainnet = "cas";
+    
+    public const long Blake3ForkHeight = 1484741;
+}
+
 public static class HoosatConstants
 {
     // List of KLS prefixes: https://github.com/Hoosat-Oy/HTND/blob/master/util/address.go

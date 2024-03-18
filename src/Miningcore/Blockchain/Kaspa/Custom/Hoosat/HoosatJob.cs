@@ -4,6 +4,7 @@ using Miningcore.Crypto;
 using Miningcore.Crypto.Hashing.Algorithms;
 using Miningcore.Extensions;
 
+
 namespace Miningcore.Blockchain.Kaspa.Custom.Hoosat;
 
 public class HoosatJob : KaspaJob
