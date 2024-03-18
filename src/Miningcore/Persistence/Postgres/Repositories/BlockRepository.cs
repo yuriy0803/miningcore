@@ -132,7 +132,17 @@ public class BlockRepository : IBlockRepository
             .Select(mapper.Map<Block>)
             .FirstOrDefault();
     }
-
+    public async Task<uint> GetBlockBeforeCountAsync(IDbConnection con, string poolId, BlockStatus[] status, DateTime before)
+    {
+        const string query = @"SELECT * FROM blocks WHERE poolid = @poolid AND status = ANY(@status) AND created < @before";
+        
+        return await con.ExecuteScalarAsync<uint>(new CommandDefinition(query, new
+        {
+            poolId,
+            status = status.Select(x => x.ToString().ToLower()).ToArray(),
+            before
+        }));
+    }
     public Task<uint> GetPoolBlockCountAsync(IDbConnection con, string poolId, CancellationToken ct)
     {
         const string query = @"SELECT COUNT(*) FROM blocks WHERE poolid = @poolId";
