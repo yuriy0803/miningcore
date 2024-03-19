@@ -108,8 +108,6 @@ public static class HoosatConstants
     public const string ChainPrefixSimnet = "hoosatsim";
     public const string ChainPrefixTestnet = "hoosattest";
     public const string ChainPrefixMainnet = "hoosat";
-    
-    public const long FishHashForkHeightTestnet = 0;
 }
 
 public enum KaspaBech32Prefix
