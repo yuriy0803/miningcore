@@ -342,7 +342,7 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
 
 
             case "HTN":
-                var hoosatNetwork = network.ToLower();
+                var HoosatNetwork = network.ToLower();
 
                 if(customBlockHeaderHasher is not Blake2b)
                     customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
@@ -350,6 +350,20 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                 if(customCoinbaseHasher is not Blake3)
                     customCoinbaseHasher = new Blake3();
 
+                if ((HoosatNetwork == "testnet" && blockHeight >= HoosatConstants.FishHashForkHeightTestnet))
+                {
+                    logger.Debug(() => $"fishHashHardFork activated");
+
+                    if(customShareHasher is not FishHash)
+                    {
+                        var started = DateTime.Now;
+                        logger.Debug(() => $"Generating light cache");
+
+                        customShareHasher = new FishHash();
+
+                        logger.Debug(() => $"Done generating light cache after {DateTime.Now - started}");
+                    }
+                }
                 else
                     if(customShareHasher is not CShake256)
                          customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
