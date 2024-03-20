@@ -342,14 +342,35 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
 
 
             case "HTN":
-                if(customBlockHeaderHasher is not Blake2b)
-                    customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+                if(blockHeight >= HoosatConstants.Blake3ForkHeight)
+                {
+                    logger.Debug(() => $"blake3HardFork activated");
 
-                if(customCoinbaseHasher is not CShake256)
-                    customCoinbaseHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseProofOfWorkHash));
+                    if(customBlockHeaderHasher is not Blake3)
+                    {
+                        string coinbaseBlockHash = KaspaConstants.CoinbaseBlockHash;
+                        byte[] hashBytes = Encoding.UTF8.GetBytes(coinbaseBlockHash.PadRight(32, '\0')).Take(32).ToArray();
+                        customBlockHeaderHasher = new Blake3(hashBytes);
+                    }
 
-                if(customShareHasher is not CShake256)
-                    customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+                    if(customCoinbaseHasher is not Blake3)
+                        customCoinbaseHasher = new Blake3();
+
+                    if(customShareHasher is not Blake3)
+                        customShareHasher = new Blake3();
+                }
+                
+                else
+                {
+                    if(customBlockHeaderHasher is not Blake2b)
+                        customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+
+                    if(customCoinbaseHasher is not CShake256)
+                        customCoinbaseHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseProofOfWorkHash));
+
+                    if(customShareHasher is not CShake256)
+                        customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+                }
 
                 return new HoosatJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
         }
