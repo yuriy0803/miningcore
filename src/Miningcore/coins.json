@@ -4996,11 +4996,11 @@
         "symbol": "AVN",
         "family": "bitcoin",
         "website": "https://avn.network/",
-        "market": "https://tradeogre.com/exchange/USDT-AVN",
+        "market": "https://xeggex.com/market/AVN_USDT",
         "twitter": "",
         "discord": "https://discord.gg/avian",
         "coinbaseHasher": {
-            "hash": "sha256d"
+            "hash": "sha256-d"
         },
         "headerHasher": {
             "hash": "minotaurx"
@@ -5019,20 +5019,25 @@
         "symbol": "AVN",
         "family": "bitcoin",
         "website": "https://avn.network/",
-        "market": "https://tradeogre.com/exchange/USDT-AVN",
+        "market": "hhttps://xeggex.com/market/AVN_USDT",
         "twitter": "",
         "discord": "https://discord.gg/avian",
         "coinbaseHasher": {
-            "hash": "sha256d"
+            "hash": "sha256-d"
         },
         "headerHasher": {
-            "hash": "minotaurx"
+            "hash": "x16r"
         },
         "blockHasher": {
             "hash": "reverse",
-            "args": [ { "hash": "minotaurx" } ]
+            "args": [
+                {
+                    "hash": "x16r"
+                }
+            ]
         },
-        "isPseudoPoS": true,
+        "shareMultiplier": 256,
+        "hasMasterNodes": true,
         "explorerBlockLink": "https://explorer-eu.avn.network/block/$height$",
         "explorerTxLink": "https://explorer-eu.avn.network/tx/{0}",
         "explorerAccountLink": "https://explorer-eu.avn.network/address/{0}"
