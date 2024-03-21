@@ -314,6 +314,9 @@
     <ClInclude Include="yespower\sha256.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sha256-d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="yespower\sysendian.h">
       <Filter>Header Files</Filter>
     </ClInclude>

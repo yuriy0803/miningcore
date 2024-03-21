@@ -222,6 +222,7 @@
     <ClInclude Include="scryptn.h" />
     <ClInclude Include="sha256.h" />
     <ClInclude Include="sha256csm.h" />
+    <ClInclude Include="sha256-d.h" />
     <ClInclude Include="sha3\extra.h" />
     <ClInclude Include="sha3\gost_streebog.h" />
     <ClInclude Include="sha3\sph_blake.h" />
