@@ -4997,10 +4997,10 @@
         "family": "bitcoin",
         "website": "https://avn.network/",
         "market": "https://xeggex.com/market/AVN_USDT",
-        "twitter": "",
-        "discord": "https://discord.gg/avian",
+        "twitter": "https://twitter.com/avianfoundation",
+        "discord": "https://discord.gg/avian-network-904209882947932160",
         "coinbaseHasher": {
-            "hash": "sha256-d"
+            "hash": "sha256d"
         },
         "headerHasher": {
             "hash": "minotaurx"
@@ -5020,19 +5020,19 @@
         "family": "bitcoin",
         "website": "https://avn.network/",
         "market": "hhttps://xeggex.com/market/AVN_USDT",
-        "twitter": "",
-        "discord": "https://discord.gg/avian",
+        "twitter": "https://twitter.com/avianfoundation",
+        "discord": "https://discord.gg/avian-network-904209882947932160",
         "coinbaseHasher": {
             "hash": "sha256-d"
         },
         "headerHasher": {
-            "hash": "x16r"
+            "hash": "x16rt"
         },
         "blockHasher": {
             "hash": "reverse",
             "args": [
                 {
-                    "hash": "x16r"
+                    "hash": "x16rt"
                 }
             ]
         },
