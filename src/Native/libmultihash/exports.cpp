@@ -47,6 +47,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "Lyra2RE.h"
 #include "Lyra2.h"
 #include "x16r.h"
+#include "x16rt.h"
 #include "x16s.h"
 #include "x16rv2.h"
 #include "x21s.h"
