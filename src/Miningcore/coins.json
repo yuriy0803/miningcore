@@ -4900,7 +4900,7 @@
         "canonicalName": "Sciprotocol",
         "symbol": "SCI",
         "family": "bitcoin",
-        "website": "sciprotocol.org",
+        "website": "https://sciprotocol.org/",
         "market": "",
         "twitter": "",
         "telegram": "https://t.me/sciprotocol",
@@ -4926,6 +4926,38 @@
         "explorerBlockLink": "https://explorer.sciprotocol.org/block/$height$",
         "explorerTxLink": "https://explorer.sciprotocol.org/tx/{0}",
         "explorerAccountLink": "https://explorer.sciprotocol.org/address/{0}"
+    },
+    "qubix": {
+        "name": "Qubix",
+        "canonicalName": "Qubix",
+        "symbol": "QXB",
+        "family": "bitcoin",
+        "website": "https://www.qubixchain.com/",
+        "market": "",
+        "twitter": "",
+        "telegram": "",
+        "discord": "https://discord.gg/txFVxnamQ9",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "ghostrider"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasFounderFee": true,
+        "hasMasterNodes": true,
+        "hasSmartNodes": true,
+        "shareMultiplier": 65536,
+        "explorerBlockLink": "http://explorer.qubixchain.com/block/$height$",
+        "explorerTxLink": "http://explorer.qubixchain.com/tx/{0}",
+        "explorerAccountLink": "http://explorer.qubixchain.com/address/{0}"
     },
     "subi": {
         "name": "Subi",
@@ -4958,5 +4990,51 @@
         "explorerBlockLink": "https://explorer.subinetwork.com/block/$height$",
         "explorerTxLink": "https://explorer.subinetwork.com/tx/{0}",
         "explorerAccountLink": "https://explorer.subinetwork.com/address/{0}"
+    },
+    "avian_minotaurx": {
+        "name": "Avian",
+        "symbol": "AVN",
+        "family": "bitcoin",
+        "website": "https://avn.network/",
+        "market": "https://tradeogre.com/exchange/USDT-AVN",
+        "twitter": "",
+        "discord": "https://discord.gg/avian",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "minotaurx"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [ { "hash": "minotaurx" } ]
+        },
+        "isPseudoPoS": true,
+        "explorerBlockLink": "https://explorer-eu.avn.network/block/$height$",
+        "explorerTxLink": "https://explorer-eu.avn.network/tx/{0}",
+        "explorerAccountLink": "https://explorer-eu.avn.network/address/{0}"
+    },
+    "avian_x16rt": {
+        "name": "Avian",
+        "symbol": "AVN",
+        "family": "bitcoin",
+        "website": "https://avn.network/",
+        "market": "https://tradeogre.com/exchange/USDT-AVN",
+        "twitter": "",
+        "discord": "https://discord.gg/avian",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "minotaurx"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [ { "hash": "minotaurx" } ]
+        },
+        "isPseudoPoS": true,
+        "explorerBlockLink": "https://explorer-eu.avn.network/block/$height$",
+        "explorerTxLink": "https://explorer-eu.avn.network/tx/{0}",
+        "explorerAccountLink": "https://explorer-eu.avn.network/address/{0}"
     }
 }
