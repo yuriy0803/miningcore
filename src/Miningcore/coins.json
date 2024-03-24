@@ -4991,7 +4991,7 @@
         "explorerTxLink": "https://explorer.subinetwork.com/tx/{0}",
         "explorerAccountLink": "https://explorer.subinetwork.com/address/{0}"
     },
-    "avian_minotaurx": {
+    "avianminotaurx": {
         "name": "Avian",
         "symbol": "AVN",
         "family": "bitcoin",
@@ -5010,11 +5010,11 @@
             "args": [ { "hash": "minotaurx" } ]
         },
         "isPseudoPoS": true,
-        "explorerBlockLink": "https://explorer-eu.avn.network/block/$height$",
-        "explorerTxLink": "https://explorer-eu.avn.network/tx/{0}",
-        "explorerAccountLink": "https://explorer-eu.avn.network/address/{0}"
+        "explorerBlockLink": "https://explorer.avn.network/block/$height$",
+        "explorerTxLink": "https://explorer.avn.network/tx/{0}",
+        "explorerAccountLink": "https://explorer.avn.network/address/{0}"
     },
-    "avian_x16rt": {
+    "avianx16rt": {
         "name": "Avian",
         "symbol": "AVN",
         "family": "bitcoin",
@@ -5038,8 +5038,38 @@
         },
         "shareMultiplier": 256,
         "hasMasterNodes": true,
-        "explorerBlockLink": "https://explorer-eu.avn.network/block/$height$",
-        "explorerTxLink": "https://explorer-eu.avn.network/tx/{0}",
-        "explorerAccountLink": "https://explorer-eu.avn.network/address/{0}"
+        "explorerBlockLink": "https://explorer.avn.network/block/$height$",
+        "explorerTxLink": "https://explorer.avn.network/tx/{0}",
+        "explorerAccountLink": "https://explorer.avn.network/address/{0}"
+    },
+    "cmusicai": {
+        "name": "Cmusicai",
+        "symbol": "CMS",
+        "family": "progpow",
+        "website": "https://cmusic.ai/",
+        "market": "",
+        "twitter": "",
+        "telegram": "",
+        "discord": "https://discord.gg/EanhmGKxcg",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasCommunityAddress": true,
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://explorer.cmusic.ai/block/$hash$",
+        "explorerTxLink": "https://explorer.cmusic.ai/tx/{0}",
+        "explorerAccountLink": "https://explorer.cmusic.ai/address/{0}"
     }
 }
