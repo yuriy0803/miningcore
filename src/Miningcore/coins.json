@@ -4955,7 +4955,7 @@
         "hasMasterNodes": true,
         "hasSmartNodes": true,
         "shareMultiplier": 65536,
-        "explorerBlockLink": "http://explorer.qubixchain.com/block/$height$",
+        "explorerBlockLink": "http://explorer.qubixchain.com/block-height/$height$",
         "explorerTxLink": "http://explorer.qubixchain.com/tx/{0}",
         "explorerAccountLink": "http://explorer.qubixchain.com/address/{0}"
     },
@@ -5009,7 +5009,7 @@
             "hash": "reverse",
             "args": [ { "hash": "minotaurx" } ]
         },
-        "isPseudoPoS": true,
+        "isPseudoPoS": false,
         "explorerBlockLink": "https://explorer.avn.network/block/$height$",
         "explorerTxLink": "https://explorer.avn.network/tx/{0}",
         "explorerAccountLink": "https://explorer.avn.network/address/{0}"
