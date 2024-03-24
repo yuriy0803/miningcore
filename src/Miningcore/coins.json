@@ -5023,7 +5023,7 @@
         "twitter": "https://twitter.com/avianfoundation",
         "discord": "https://discord.gg/avian-network-904209882947932160",
         "coinbaseHasher": {
-            "hash": "sha256-d"
+            "hash": "sha256d"
         },
         "headerHasher": {
             "hash": "x16rt"
