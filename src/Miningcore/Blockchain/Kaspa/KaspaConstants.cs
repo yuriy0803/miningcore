@@ -66,6 +66,7 @@ public static class KarlsencoinConstants
     public const string ChainPrefixMainnet = "karlsen";
     
     public const long FishHashForkHeightTestnet = 0;
+    public const long FishHashForkHeightMainnet = 999999999999;
 }
 
 public static class NautilusConstants

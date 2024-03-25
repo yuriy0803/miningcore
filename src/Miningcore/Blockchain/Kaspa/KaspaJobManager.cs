@@ -231,19 +231,19 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                 {
                     logger.Debug(() => $"fishHashHardFork activated");
 
-                    if(customShareHasher is not FishHash)
+                    if(customShareHasher is not FishHashKarlsen)
                     {
                         var started = DateTime.Now;
                         logger.Debug(() => $"Generating light cache");
 
-                        customShareHasher = new FishHash();
+                        customShareHasher = new FishHashKarlsen();
 
                         logger.Debug(() => $"Done generating light cache after {DateTime.Now - started}");
                     }
                 }
                 else
                     if(customShareHasher is not CShake256)
-                         customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+                        customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
 
                 return new KarlsencoinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
             case "NTL":
@@ -877,6 +877,10 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
             
             if(info.GetInfoResponse.IsUtxoIndexed != true)
                 throw new PoolStartupException("UTXO index is disabled", poolConfig.Id);
+            
+            // update stats
+            if(info.GetInfoResponse.ServerVersion != null)
+                BlockchainStats.NodeVersion = (string) info.GetInfoResponse.ServerVersion;
             
             areDaemonsHealthy = true;
             break;
