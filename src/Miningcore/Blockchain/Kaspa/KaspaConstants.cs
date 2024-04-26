@@ -6,6 +6,24 @@ using System.Text.RegularExpressions;
 
 namespace Miningcore.Blockchain.Kaspa;
 
+public static class BugnaConstants
+{
+    // List of BGA prefixes: https://github.com/bugnanetwork/bugnad/blob/master/util/address.go
+    public const string ChainPrefixDevnet = "bugnadev";
+    public const string ChainPrefixSimnet = "bugnasim";
+    public const string ChainPrefixTestnet = "bugnatest";
+    public const string ChainPrefixMainnet = "bugna";
+}
+
+public static class HoosatConstants
+{
+    // List of HTN prefixes: https://github.com/Hoosat-Oy/HTND/blob/master/util/address.go
+    public const string ChainPrefixDevnet = "htndev";
+    public const string ChainPrefixSimnet = "hoosatsim";
+    public const string ChainPrefixTestnet = "hoosattest";
+    public const string ChainPrefixMainnet = "hoosat";
+}
+
 public static class KaspaConstants
 {
     public const string WalletDaemonCategory = "wallet";
@@ -57,6 +75,15 @@ public static class KaspaConstants
     public const int Blake2bSize256 = 32;
 }
 
+public static class KaspaClassicConstants
+{
+    // List of CAS prefixes: https://github.com/kaspaclassic/caspad/blob/main/util/address.go
+    public const string ChainPrefixDevnet = "caspadev";
+    public const string ChainPrefixSimnet = "pyrinsim";
+    public const string ChainPrefixTestnet = "pyrintest";
+    public const string ChainPrefixMainnet = "cas";
+}
+
 public static class KarlsencoinConstants
 {
     // List of KLS prefixes: https://github.com/karlsen-network/karlsend/blob/master/util/address.go
@@ -66,7 +93,25 @@ public static class KarlsencoinConstants
     public const string ChainPrefixMainnet = "karlsen";
     
     public const long FishHashForkHeightTestnet = 0;
-    public const long FishHashForkHeightMainnet = 999999999999;
+    public const long FishHashPlusForkHeightTestnet = 6000000;
+}
+
+public static class NautilusConstants
+{
+    // List of NTL prefixes: https://github.com/Nautilus-Network/nautiliad/blob/master/util/address.go
+    public const string ChainPrefixDevnet = "nautiliadev";
+    public const string ChainPrefixSimnet = "nautilussim";
+    public const string ChainPrefixTestnet = "nautilustest";
+    public const string ChainPrefixMainnet = "nautilus";
+}
+
+public static class NexelliaConstants
+{
+    // List of NXL prefixes: https://github.com/Nexellia-Network/nexelliad/blob/master/util/address.go
+    public const string ChainPrefixDevnet = "nexelliadev";
+    public const string ChainPrefixSimnet = "nexelliasim";
+    public const string ChainPrefixTestnet = "nexelliatest";
+    public const string ChainPrefixMainnet = "nexellia";
 }
 
 public static class PyrinConstants
@@ -78,6 +123,15 @@ public static class PyrinConstants
     public const string ChainPrefixMainnet = "pyrin";
     
     public const long Blake3ForkHeight = 1484741;
+}
+
+public static class SedraCoinConstants
+{
+    // List of HTN prefixes: https://github.com/sedracoin/sedrad/blob/main/util/address.go
+    public const string ChainPrefixDevnet = "sedradev";
+    public const string ChainPrefixSimnet = "sedrasim";
+    public const string ChainPrefixTestnet = "sedratest";
+    public const string ChainPrefixMainnet = "sedra";
 }
 
 public enum KaspaBech32Prefix

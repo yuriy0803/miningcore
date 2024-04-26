@@ -215,6 +215,22 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
     {
         switch(coin.Symbol)
         {
+            case "CAS":
+            case "HTN":
+                if(customBlockHeaderHasher is not Blake3)
+                {
+                    string coinbaseBlockHash = KaspaConstants.CoinbaseBlockHash;
+                    byte[] hashBytes = Encoding.UTF8.GetBytes(coinbaseBlockHash.PadRight(32, '\0')).Take(32).ToArray();
+                    customBlockHeaderHasher = new Blake3(hashBytes);
+                }
+
+                if(customCoinbaseHasher is not Blake3)
+                        customCoinbaseHasher = new Blake3();
+
+                if(customShareHasher is not Blake3)
+                    customShareHasher = new Blake3();
+
+                return new PyrinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
             case "KLS":
                 var karlsenNetwork = network.ToLower();
 
@@ -224,7 +240,21 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                 if(customCoinbaseHasher is not Blake3)
                     customCoinbaseHasher = new Blake3();
 
-                if ((karlsenNetwork == "testnet" && blockHeight >= KarlsencoinConstants.FishHashForkHeightTestnet))
+                if(karlsenNetwork == "testnet" && blockHeight >= KarlsencoinConstants.FishHashPlusForkHeightTestnet)
+                {
+                    logger.Debug(() => $"fishHashPlusHardFork activated");
+
+                    if(customShareHasher is not FishHashKarlsen)
+                    {
+                        var started = DateTime.Now;
+                        logger.Debug(() => $"Generating light cache");
+
+                        customShareHasher = new FishHashKarlsen(true);
+
+                        logger.Debug(() => $"Done generating light cache after {DateTime.Now - started}");
+                    }
+                }
+                else if(karlsenNetwork == "testnet" && blockHeight >= KarlsencoinConstants.FishHashForkHeightTestnet)
                 {
                     logger.Debug(() => $"fishHashHardFork activated");
 
@@ -241,6 +271,18 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                 else
                     if(customShareHasher is not CShake256)
                         customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
+
+                return new KarlsencoinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
+            case "NTL":
+            case "NXL":
+                if(customBlockHeaderHasher is not Blake2b)
+                    customBlockHeaderHasher = new Blake2b(Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseBlockHash));
+
+                if(customCoinbaseHasher is not Blake3)
+                    customCoinbaseHasher = new Blake3();
+
+                if(customShareHasher is not CShake256)
+                    customShareHasher = new CShake256(null, Encoding.UTF8.GetBytes(KaspaConstants.CoinbaseHeavyHash));
 
                 return new KarlsencoinJob(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher);
             case "PYI":

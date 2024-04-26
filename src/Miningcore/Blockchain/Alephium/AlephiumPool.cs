@@ -64,9 +64,20 @@ public class AlephiumPool : PoolBase
             blockchainStats.NodeVersion
         };
 
-        await connection.RespondAsync(data, request.Id);
-
         context.UserAgent = requestParams.FirstOrDefault()?.Trim();
+
+        // Nicehash's stupid validator insists on "error" property present
+        // in successful responses which is a violation of the JSON-RPC spec
+        // [Respect the goddamn standards Nicehack :(]
+        var response = new JsonRpcResponse<object[]>(data, request.Id);
+
+        if(context.IsNicehash)
+        {
+            response.Extra = new Dictionary<string, object>();
+            response.Extra["error"] = null;
+        }
+
+        await connection.RespondAsync(response);
 
         logger.Info(() => $"[{connection.ConnectionId}] Hello {context.UserAgent}");
     }
@@ -81,8 +92,6 @@ public class AlephiumPool : PoolBase
         var context = connection.ContextAs<AlephiumWorkerContext>();
         var requestParams = request.ParamsAs<string[]>();
 
-        await connection.RespondAsync(connection.ConnectionId, request.Id);
-
         // setup worker context
         context.IsSubscribed = true;
         // If the user agent was set by a mining.hello, we don't want to overwrite that (to match actual protocol)
@@ -90,6 +99,19 @@ public class AlephiumPool : PoolBase
         {
             context.UserAgent = requestParams.FirstOrDefault()?.Trim();
         }
+
+        // Nicehash's stupid validator insists on "error" property present
+        // in successful responses which is a violation of the JSON-RPC spec
+        // [Respect the goddamn standards Nicehack :(]
+        var response = new JsonRpcResponse<object>(connection.ConnectionId, request.Id);
+
+        if(context.IsNicehash)
+        {
+            response.Extra = new Dictionary<string, object>();
+            response.Extra["error"] = null;
+        }
+
+        await connection.RespondAsync(response);
     }
 
     protected virtual async Task OnAuthorizeAsync(StratumConnection connection, Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
@@ -122,12 +144,27 @@ public class AlephiumPool : PoolBase
             {
                 // setup worker context
                 context.IsSubscribed = true;
-                context.UserAgent = requestParams.FirstOrDefault()?.Trim();
+                // If the user agent was set by a mining.hello, we don't want to overwrite that (to match actual protocol)
+                if (string.IsNullOrEmpty(context.UserAgent))
+                {
+                    context.UserAgent = requestParams?.Length > 2 ? requestParams[2] : requestParams.FirstOrDefault()?.Trim();
+                }
             }
-            
+
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [Respect the goddamn standards Nicehack :(]
+            var response = new JsonRpcResponse<object>(context.IsAuthorized, request.Id);
+
+            if(context.IsNicehash)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+
             // respond
-            await connection.RespondAsync(context.IsAuthorized, request.Id);
-            
+            await connection.RespondAsync(response);
+
             // send extranonce
             await connection.NotifyAsync(AlephiumStratumMethods.SetExtraNonce, manager.GetSubscriberData(connection));
 
@@ -216,7 +253,20 @@ public class AlephiumPool : PoolBase
 
             // submit
             var share = await manager.SubmitShareAsync(connection, requestParams, ct);
-            await connection.RespondAsync(true, request.Id);
+
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [Respect the goddamn standards Nicehack :(]
+            var response = new JsonRpcResponse<object>(true, request.Id);
+
+            if(context.IsNicehash)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+
+            // respond
+            await connection.RespondAsync(response);
 
             // publish
             messageBus.SendMessage(share);

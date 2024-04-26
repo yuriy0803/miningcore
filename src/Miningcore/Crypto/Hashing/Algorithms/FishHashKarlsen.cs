@@ -6,11 +6,14 @@ namespace Miningcore.Crypto.Hashing.Algorithms;
 [Identifier("fishhashkarlsen")]
 public unsafe class FishHashKarlsen : IHashAlgorithm
 {
+    private bool enableFishHashPlus = false;
     private IntPtr handle = IntPtr.Zero;
     private readonly object genLock = new();
 
-    public FishHashKarlsen(bool fullContext = false, uint threads = 4)
+    public FishHashKarlsen(bool enableFishHashPlus = false, bool fullContext = false, uint threads = 4)
     {
+        this.enableFishHashPlus = enableFishHashPlus;
+
         lock(genLock)
         {
             this.handle = Multihash.fishhashGetContext(fullContext);
@@ -33,7 +36,7 @@ public unsafe class FishHashKarlsen : IHashAlgorithm
         var seed = new Multihash.Fishhash_hash512();
         seed.bytes = seedBytes.ToArray();
 
-        mixHash = Multihash.fishhashKernel(this.handle, ref seed);
+        mixHash = (this.enableFishHashPlus) ? Multihash.fishhashplusKernel(this.handle, ref seed) : Multihash.fishhashKernel(this.handle, ref seed);
 
         fixed(byte* input = mixHash.bytes)
         {

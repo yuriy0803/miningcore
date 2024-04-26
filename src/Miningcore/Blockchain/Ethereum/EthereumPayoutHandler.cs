@@ -79,6 +79,11 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         Contract.RequiresNonNull(poolConfig);
         Contract.RequiresNonNull(blocks);
 
+        // ensure we have enough peers
+        var enoughPeers = await EnsureDaemonsSynchedAsync(ct);
+        if(!enoughPeers)
+            return blocks;
+
         var coin = poolConfig.Template.As<EthereumCoinTemplate>();
         var pageSize = 100;
         var pageCount = (int) Math.Ceiling(blocks.Length / (double) pageSize);
@@ -250,6 +255,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                                 
                                 block.Hash = uncle.Hash;
                                 block.Reward = GetUncleReward(chainType, uncle.Height.Value, blockInfo2.Height.Value);
+                                block.BlockHeight = uncle.Height.Value;
 
                                 // There is a rare case-scenario where an Uncle has a block reward of zero
                                 // We must handle it carefully otherwise payout will be stuck forever
@@ -257,7 +263,6 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                                 {
                                     block.Status = BlockStatus.Confirmed;
                                     block.ConfirmationProgress = 1;
-                                    block.BlockHeight = uncle.Height.Value;
                                 }
                                 else
                                 {
@@ -307,16 +312,10 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
 
     public async Task PayoutAsync(IMiningPool pool, Balance[] balances, CancellationToken ct)
     {
-        // ensure we have peers
-        var infoResponse = await rpcClient.ExecuteAsync<string>(logger, EC.GetPeerCount, ct);
-
-        if((networkType == EthereumNetworkType.Main || extraPoolConfig?.ChainTypeOverride == "Classic" || extraPoolConfig?.ChainTypeOverride == "Mordor" || networkType == EthereumNetworkType.MainPow || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "OctaSpace" || extraPoolConfig?.ChainTypeOverride == "OctaSpaceTestnet" || extraPoolConfig?.ChainTypeOverride == "Hypra") &&
-           (infoResponse.Error != null || string.IsNullOrEmpty(infoResponse.Response) ||
-               infoResponse.Response.IntegralFromHex<int>() < EthereumConstants.MinPayoutPeerCount))
-        {
-            logger.Warn(() => $"[{LogCategory}] Payout aborted. Not enough peers (4 required)");
+        // ensure we have enough peers
+        var enoughPeers = await EnsureDaemonsSynchedAsync(ct);
+        if(!enoughPeers)
             return;
-        }
 
         var txHashes = new List<string>();
 
@@ -346,6 +345,22 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
     }
 
     #endregion // IPayoutHandler
+
+    private async Task<bool> EnsureDaemonsSynchedAsync(CancellationToken ct)
+    {
+        // ensure we have enough peers
+        var infoResponse = await rpcClient.ExecuteAsync<string>(logger, EC.GetPeerCount, ct);
+
+        if((networkType == EthereumNetworkType.Main || extraPoolConfig?.ChainTypeOverride == "Classic" || extraPoolConfig?.ChainTypeOverride == "Mordor" || networkType == EthereumNetworkType.MainPow || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "OctaSpace" || extraPoolConfig?.ChainTypeOverride == "OctaSpaceTestnet" || extraPoolConfig?.ChainTypeOverride == "Hypra") &&
+           (infoResponse.Error != null || string.IsNullOrEmpty(infoResponse.Response) ||
+               infoResponse.Response.IntegralFromHex<int>() < EthereumConstants.MinPayoutPeerCount))
+        {
+            logger.Warn(() => $"[{LogCategory}] Payout aborted. Not enough peer(s) ({EthereumConstants.MinPayoutPeerCount} required)");
+            return false;
+        }
+
+        return true;
+    }
 
     private async Task<DaemonResponses.Block[]> FetchBlocks(Dictionary<long, DaemonResponses.Block> blockCache, CancellationToken ct, params long[] blockHeights)
     {
@@ -491,30 +506,37 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
             case GethChainType.Mordor:
                 double heightEraLength = height / EthereumClassicConstants.EraLength;
                 double era = Math.Floor(heightEraLength);
-                if (era == 0) {
-                    reward *= uheight + 8 - height;
+
+                if(era == 0)
+                {
+                    if(uheight != height)
+                        reward *= uheight + 8 - height;
+
                     reward /= 8m;
                 }
-                else {
+                else
+                {
                     reward /= 32m;
                 }
-                
+
                 break;
             case GethChainType.Ubiq:
-                reward = (uheight == height) ? reward / 2 : (uheight + 2 - height) * reward / 2;
-                // blocks older than the previous block are not rewarded
-                if (reward < 0)
-                    reward = 0;
-                
+                if(uheight != height)
+                    reward *= uheight + 2 - height;
+
+                reward /= 2m;
+
                 break;
             case GethChainType.Hypra:
                 reward = 0.1m;
-                
+
                 break;
             default:
-                reward *= uheight + 8 - height;
+                if(uheight != height)
+                    reward *= uheight + 8 - height;
+
                 reward /= 8m;
-                
+
                 break;
         }
         

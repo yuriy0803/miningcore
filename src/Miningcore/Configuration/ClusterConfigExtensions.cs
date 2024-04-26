@@ -259,7 +259,11 @@ public partial class KaspaCoinTemplate
         switch(Symbol)
         {
             case "KLS":
+            case "NTL":
+            case "NXL":
                 return "Karlsenhash";
+            case "CAS":
+            case "HTN":
             case "PYI":
                 return "Pyrinhash";
             default:

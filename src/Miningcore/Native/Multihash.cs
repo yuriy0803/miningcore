@@ -213,12 +213,15 @@ public static unsafe class Multihash
     
     [DllImport("libmultihash", EntryPoint = "fishhash_kernel", CallingConvention = CallingConvention.Cdecl)]
     public static extern Fishhash_hash256 fishhashKernel(IntPtr context, ref Fishhash_hash512 seed);
+
+    [DllImport("libmultihash", EntryPoint = "fishhashplus_kernel", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Fishhash_hash256 fishhashplusKernel(IntPtr context, ref Fishhash_hash512 seed);
     
     [DllImport("libmultihash", EntryPoint = "fishhash_prebuild_dataset", CallingConvention = CallingConvention.Cdecl)]
     public static extern void fishhashPrebuildDataset(IntPtr context, uint number_threads = 1);
 
     [DllImport("libmultihash", EntryPoint = "fishhash_hash", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void fishhash(void* output, IntPtr context, byte* input, uint inputLength);
+    public static extern void fishhash(void* output, IntPtr context, byte* input, uint inputLength, bool enableFishHashPlus = false);
 
     [StructLayout(LayoutKind.Explicit)]
     public struct Fishhash_hash256

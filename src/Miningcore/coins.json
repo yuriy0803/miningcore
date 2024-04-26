@@ -2420,9 +2420,9 @@
         "hasCommunityAddress": true,
         "shareMultiplier": 1,
         "progpower": "meowpow",
-        "explorerBlockLink": "https://explorer.mewccrypto.com/block/$hash$",
-        "explorerTxLink": "https://explorer.mewccrypto.com/tx/{0}",
-        "explorerAccountLink": "https://explorer.mewccrypto.com/address/{0}"
+        "explorerBlockLink": "https://mewc.cryptoscope.io/block/?blockhash=$hash$",
+        "explorerTxLink": "https://mewc.cryptoscope.io/tx/?txid={0}",
+        "explorerAccountLink": "https://mewc.cryptoscope.io/address/?address={0}"
     },
     "aipg": {
         "name": "AI Power Grid",
@@ -4880,6 +4880,34 @@
         "explorerTxLink": "https://explorer.alephium.org/transactions/{0}",
         "explorerAccountLink": "https://explorer.alephium.org/addresses/{0}"
     },
+    "bugna": {
+        "name": "Bugna Network",
+        "canonicalName": "Bugna Network",
+        "symbol": "BGA",
+        "family": "kaspa",
+        "website": "https://bugna.org/",
+        "market": "",
+        "twitter": "https://twitter.com/bugnanetwork",
+        "telegram": "",
+        "discord": "https://discord.com/invite/YxDF2EMKTq",
+        "explorerBlockLink": "https://explorer.bugna.org/blocks/$hash$",
+        "explorerTxLink": "https://explorer.bugna.org/txs/{0}",
+        "explorerAccountLink": "https://explorer.bugna.org/addresses/{0}"
+    },
+    "hoosat": {
+        "name": "Hoosat",
+        "canonicalName": "Hoosat",
+        "symbol": "HTN",
+        "family": "kaspa",
+        "website": "https://network.hoosat.fi/",
+        "market": "",
+        "twitter": "https://twitter.com/HoosatNetwork",
+        "telegram": "https://t.me/HoosatNetwork",
+        "discord": "https://discord.com/invite/NzENEkxEqY",
+        "explorerBlockLink": "https://explorer.hoosat.fi/blocks/$hash$",
+        "explorerTxLink": "https://explorer.hoosat.fi/txs/{0}",
+        "explorerAccountLink": "https://explorer.hoosat.fi/addresses/{0}"
+    },
     "kaspa": {
         "name": "Kaspa",
         "canonicalName": "Kaspa",
@@ -4894,13 +4922,27 @@
         "explorerTxLink": "https://explorer.kaspa.org/txs/{0}",
         "explorerAccountLink": "https://explorer.kaspa.org/addresses/{0}"
     },
+    "kaspaclassic": {
+        "name": "Kaspa Classic",
+        "canonicalName": "Kaspa Classic",
+        "symbol": "CAS",
+        "family": "kaspa",
+        "website": "https://kaspaclassic.com/",
+        "market": "",
+        "twitter": "https://twitter.com/kaspaclassic",
+        "telegram": "https://t.me/kaspaclassic",
+        "discord": "https://discord.com/invite/kaspaclassic1",
+        "explorerBlockLink": "https://explorer.kaspa-classic.online/blocks/$hash$",
+        "explorerTxLink": "https://explorer.kaspa-classic.online/txs/{0}",
+        "explorerAccountLink": "https://explorer.kaspa-classic.online/addresses/{0}"
+    },
     "karlsencoin": {
         "name": "Karlsencoin",
         "canonicalName": "Karlsencoin",
         "symbol": "KLS",
         "family": "kaspa",
         "website": "https://karlsencoin.com/",
-        "market": "",
+        "market": "https://coinmarketcap.com/currencies/karlsen/",
         "twitter": "https://twitter.com/karlsennetwork",
         "telegram": "https://t.me/KarlsenNetwork",
         "discord": "https://discord.com/invite/NasfjsEm",
@@ -4908,18 +4950,60 @@
         "explorerTxLink": "https://explorer.karlsencoin.com/txs/{0}",
         "explorerAccountLink": "https://explorer.karlsencoin.com/addresses/{0}"
     },
+    "nautilus-network": {
+        "name": "Nautilus-Network",
+        "canonicalName": "Nautilus-Network",
+        "symbol": "NTL",
+        "family": "kaspa",
+        "website": "https://nautilus-network.net/",
+        "market": "",
+        "twitter": "https://twitter.com/nautilusNTL",
+        "telegram": "",
+        "discord": "https://discord.com/invite/qWcUUgww4d",
+        "explorerBlockLink": "https://explorer.nautilus-network.net/blocks/$hash$",
+        "explorerTxLink": "https://explorer.nautilus-network.net/txs/{0}",
+        "explorerAccountLink": "https://explorer.nautilus-network.net/addresses/{0}"
+    },
+    "nexellia": {
+        "name": "Nexellia Network",
+        "canonicalName": "Nexellia Network",
+        "symbol": "NXL",
+        "family": "kaspa",
+        "website": "https://nexell-ia.net/",
+        "market": "",
+        "twitter": "https://twitter.com/nexellia",
+        "telegram": "https://t.me/NexelliaNetwork",
+        "discord": "https://discord.com/invite/MHn4wStC4h",
+        "explorerBlockLink": "https://explorer.nexell-ia.net/blocks/$hash$",
+        "explorerTxLink": "https://explorer.nexell-ia.net/txs/{0}",
+        "explorerAccountLink": "https://explorer.nexell-ia.net/addresses/{0}"
+    },
     "pyrin": {
         "name": "Pyrin",
         "canonicalName": "Pyrin",
         "symbol": "PYI",
         "family": "kaspa",
         "website": "https://pyrin.network/",
-        "market": "",
+        "market": "https://coinmarketcap.com/currencies/pyrin/",
         "twitter": "https://twitter.com/pyrin_network",
         "telegram": "https://t.me/pyrin_network",
         "discord": "https://discord.gg/QQgWRntF",
         "explorerBlockLink": "https://explorer.pyrin.network/blocks/$hash$",
         "explorerTxLink": "https://explorer.pyrin.network/txs/{0}",
         "explorerAccountLink": "https://explorer.pyrin.network/addresses/{0}"
+    },
+    "sedracoin": {
+        "name": "Sedracoin",
+        "canonicalName": "Sedracoin",
+        "symbol": "SDR",
+        "family": "kaspa",
+        "website": "https://sedracoin.com/",
+        "market": "https://www.coingecko.com/en/coins/sedra-coin",
+        "twitter": "https://twitter.com/SedraCoin",
+        "telegram": "https://t.me/OfficialSedraCoin",
+        "discord": "https://discord.gg/jWHrkKMSEr",
+        "explorerBlockLink": "https://explorer.sedracoin.com/blocks/$hash$",
+        "explorerTxLink": "https://explorer.sedracoin.com/txs/{0}",
+        "explorerAccountLink": "https://explorer.sedracoin.com/addresses/{0}"
     }
 }
