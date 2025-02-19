@@ -15,6 +15,8 @@ using Miningcore.Blockchain.Kaspa;
 using Miningcore.Blockchain.Nexa;
 using Miningcore.Blockchain.Progpow;
 using Miningcore.Blockchain.Warthog;
+using Miningcore.Blockchain.Xelis;
+using Miningcore.Blockchain.Zano;
 using Miningcore.Configuration;
 using Miningcore.Crypto;
 using Miningcore.Crypto.Hashing.Equihash;
@@ -236,6 +238,16 @@ public class AutofacModule : Module
         // Warthog
 
         builder.RegisterType<WarthogJobManager>();
+
+        //////////////////////
+        // Xelis
+
+        builder.RegisterType<XelisJobManager>();
+
+        //////////////////////
+        // Zano
+
+        builder.RegisterType<ZanoJobManager>();
 
         base.Load(builder);
     }

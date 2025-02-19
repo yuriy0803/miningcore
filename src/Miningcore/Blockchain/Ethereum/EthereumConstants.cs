@@ -126,6 +126,22 @@ public class UbiqConstants
     public const decimal BaseRewardInitial = 8.0m;
 }
 
+// CORTEX block reward distribution - 
+// https://github.com/CortexFoundation/CortexTheseus/blob/master/params/config.go#L88
+public class CortexConstants
+{
+    public static double Pow2x30 = Math.Pow(2, 30);
+    public static BigInteger BigPow2x30 = new(Pow2x30);
+
+    public const ulong BaseBlockRewardPeriod = 8409600; // Halving every four years: 365 days * 24 hours * 60 minutes * 4 blocks * 4 years = 8409600
+    public const ulong DoloresBlockRewardPeriod = 1000000;
+
+    public const decimal BaseRewardInitial = 7.0m;
+
+    public const int CuckarooHeaderNonceSize = 40;
+    public const int CuckarooSolutionSize = 42;
+}
+
 public enum EthereumNetworkType
 {
     Main = 1,
@@ -140,6 +156,9 @@ public enum EthereumNetworkType
     OctaSpace = 800001,
     OctaSpaceTestnet = 800002,
     Hypra = 622277,
+    Cortex = 21,
+    Dolores = 43,
+    Bernard = 42,
 
     Unknown = -1,
 }
@@ -158,28 +177,31 @@ public enum GethChainType
     OctaSpace,
     OctaSpaceTestnet,
     Hypra,
+    Cortex = 21,
+    Dolores = 43,
+    Bernard = 42,
     
     Unknown = -1,
 }
 
 public static class EthCommands
 {
-    public const string GetWork = "eth_getWork";
-    public const string SubmitWork = "eth_submitWork";
-    public const string Sign = "eth_sign";
+    public const string GetWork = "_getWork";
+    public const string SubmitWork = "_submitWork";
+    public const string Sign = "_sign";
     public const string GetNetVersion = "net_version";
     public const string GetClientVersion = "web3_clientVersion";
-    public const string GetCoinbase = "eth_coinbase";
-    public const string GetAccounts = "eth_accounts";
+    public const string GetCoinbase = "_coinbase";
+    public const string GetAccounts = "_accounts";
     public const string GetPeerCount = "net_peerCount";
-    public const string GetSyncState = "eth_syncing";
-    public const string GetBlockNumber = "eth_blockNumber";
-    public const string GetBlockByNumber = "eth_getBlockByNumber";
-    public const string GetBlockByHash = "eth_getBlockByHash";
-    public const string GetUncleByBlockNumberAndIndex = "eth_getUncleByBlockNumberAndIndex";
-    public const string GetTxReceipt = "eth_getTransactionReceipt";
-    public const string SendTx = "eth_sendTransaction";
+    public const string GetSyncState = "_syncing";
+    public const string GetBlockNumber = "_blockNumber";
+    public const string GetBlockByNumber = "_getBlockByNumber";
+    public const string GetBlockByHash = "_getBlockByHash";
+    public const string GetUncleByBlockNumberAndIndex = "_getUncleByBlockNumberAndIndex";
+    public const string GetTxReceipt = "_getTransactionReceipt";
+    public const string SendTx = "_sendTransaction";
     public const string UnlockAccount = "personal_unlockAccount";
-    public const string Subscribe = "eth_subscribe";
-    public const string MaxPriorityFeePerGas = "eth_maxPriorityFeePerGas";
+    public const string Subscribe = "_subscribe";
+    public const string MaxPriorityFeePerGas = "_maxPriorityFeePerGas";
 }

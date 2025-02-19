@@ -52,7 +52,6 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
     private SimpleRestClient restClient;
     private RpcClient rpc;
     private WarthogNetworkType network;
-    private readonly List<WarthogJob> validJobs = new();
     private readonly IExtraNonceProvider extraNonceProvider;
     private readonly IMasterClock clock;
     private WarthogPoolConfigExtra extraPoolConfig;
@@ -69,9 +68,9 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
                 return false;
 
             var job = currentJob;
+            var newHash = blockTemplate.Data.Header.HexToByteArray().AsSpan().Slice(WarthogConstants.HeaderOffsetPrevHash, WarthogConstants.HeaderOffsetTarget).ToHexString();
             var isNew = currentJob == null ||
-                job.BlockTemplate.Data.Height < blockTemplate.Data.Height ||
-                job.BlockTemplate.Data.Header != blockTemplate.Data.Header;
+                (newHash != job?.PrevHash);
 
             if(isNew)
             {
@@ -79,16 +78,7 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
 
                 // update job
                 job = new WarthogJob();
-                job.Init(blockTemplate, NextJobId(), clock, network, isJanusHash);
-
-                lock(jobLock)
-                {
-                    validJobs.Insert(0, job);
-
-                    // trim active jobs
-                    while(validJobs.Count > maxActiveJobs)
-                        validJobs.RemoveAt(validJobs.Count - 1);
-                }
+                job.Init(blockTemplate, NextJobId(), clock, network, isJanusHash, newHash);
 
                 if(via != null)
                     logger.Info(() => $"Detected new block {blockTemplate.Data.Height} [{via}]");
@@ -128,12 +118,6 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
         }
 
         return false;
-    }
-
-    protected object GetJobParamsForStratum(bool isNew)
-    {
-        var job = currentJob;
-        return job?.GetJobParams(isNew);
     }
 
     private async Task UpdateNetworkStatsAsync(CancellationToken ct)
@@ -183,6 +167,18 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
             logger.Error(e);
             return false;
         }
+    }
+
+    protected object GetJobParamsForStratum(bool isNew)
+    {
+        var job = currentJob;
+        return job?.GetJobParams(isNew);
+    }
+
+    public override WarthogJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
     }
 
     #region API-Surface
@@ -253,9 +249,9 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
 
         WarthogJob job;
 
-        lock(jobLock)
+        lock(context)
         {
-            job = validJobs.FirstOrDefault(x => x.JobId == jobId);
+            job = context.GetJob(jobId);
         }
 
         if(job == null)
@@ -528,7 +524,7 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
             logger.Info(() => $"Subscribing to WebSocket {(wsEndpointConfig.Ssl ? "wss" : "ws")}://{wsEndpointConfig.Host}:{wsEndpointConfig.Port}");
 
             // stream work updates
-            var getWorkObs = rpc.WebsocketSubscribe(logger, ct, wsEndpointConfig, WarthogCommands.Websocket, new[] { WarthogCommands.WebsocketEventBlockAppend })
+            var getWorkObs = rpc.WebsocketSubscribe(logger, ct, wsEndpointConfig, WarthogCommands.Websocket, new[] { WarthogCommands.WebsocketEventRollback, WarthogCommands.WebsocketEventBlockAppend })
                 .Publish()
                 .RefCount();
 

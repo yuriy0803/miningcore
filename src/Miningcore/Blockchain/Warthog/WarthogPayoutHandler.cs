@@ -307,6 +307,9 @@ public class WarthogPayoutHandler : PayoutHandlerBase,
             return;
         }
 
+        if(extraPoolPaymentProcessingConfig?.KeepTransactionFees == true)
+            logger.Debug(() => $"[{LogCategory}] Pool does not pay the transaction fee, so each address will have its payout deducted with [{FormatAmount(maximumTransactionFees / WarthogConstants.SmallestUnit)}]");
+
         var txFailures = new List<Tuple<KeyValuePair<string, decimal>, Exception>>();
         var successBalances = new Dictionary<Balance, string>();
 
@@ -355,7 +358,7 @@ public class WarthogPayoutHandler : PayoutHandlerBase,
                 if(feeE8Encoded?.Error != null)
                     throw new Exception($"'{WarthogCommands.GetFeeE8Encoded}': {feeE8Encoded.Error} (Code {feeE8Encoded?.Code})");
 
-                var amountE8 = (ulong) Math.Floor(((extraPoolPaymentProcessingConfig?.KeepTransactionFees == false) ? amount : amount - maximumTransactionFees) * WarthogConstants.SmallestUnit);
+                var amountE8 = (ulong) Math.Floor(((extraPoolPaymentProcessingConfig?.KeepTransactionFees == false) ? amount : (amount > (maximumTransactionFees / WarthogConstants.SmallestUnit) ? amount - (maximumTransactionFees / WarthogConstants.SmallestUnit) : amount)) * WarthogConstants.SmallestUnit);
 
                 // generate bytes to sign
                 var pinHashBytes = chainInfo.Data.PinHash.HexToByteArray();

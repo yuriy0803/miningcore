@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 using Miningcore.Mining;
 
 namespace Miningcore.Blockchain.Progpow;
@@ -19,18 +22,22 @@ public class ProgpowWorkerContext : WorkerContextBase
     /// </summary>
     public string ExtraNonce1 { get; set; }
 
-    private List<ProgpowWorkerJob> ValidJobs { get; } = new();
+    /// <summary>
+    /// Current N job(s) assigned to this worker
+    /// </summary>
+    public Queue<ProgpowWorkerJob> validJobs { get; private set; } = new();
 
-    public void AddJob(ProgpowWorkerJob job)
+    public virtual void AddJob(ProgpowWorkerJob job, int maxActiveJobs)
     {
-        ValidJobs.Insert(0, job);
+        if(!validJobs.Contains(job))
+            validJobs.Enqueue(job);
 
-        while(ValidJobs.Count > 4)
-            ValidJobs.RemoveAt(ValidJobs.Count - 1);
+        while(validJobs.Count > maxActiveJobs)
+            validJobs.Dequeue();
     }
 
-    public ProgpowWorkerJob FindJob(string jobId)
+    public ProgpowWorkerJob GetJob(string jobId)
     {
-        return ValidJobs.FirstOrDefault(x => x.Id == jobId);
+        return validJobs.ToArray().FirstOrDefault(x => x.Id == jobId);
     }
 }

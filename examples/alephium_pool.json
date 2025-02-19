@@ -74,6 +74,7 @@
                 "percentage": 1
             }
         ],
+        "enableAsicBoost": true,
         "clientConnectionTimeout": 600,
         "socketJobMessageBufferSize": 16384,
         "banning": {

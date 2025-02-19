@@ -446,6 +446,18 @@
     <ClInclude Include="flex\cryptonote\crypto\wild_keccak.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="chacha20\chacha20.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xelishash\aes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xelishash\crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xelishash\xelishash.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -842,6 +854,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="flex\cryptonote\crypto\wild_keccak.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chacha20\chacha20.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xelishash\xelishashv1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xelishash\xelishashv2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

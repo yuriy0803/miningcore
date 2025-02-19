@@ -163,9 +163,11 @@ public class WarthogPool : PoolBase
                 logger.Info(() => $"[{connection.ConnectionId}] Setting static difficulty of {staticDiff.Value}");
             }
 
+            var minerJobParams = CreateWorkerJob(connection, context.IsAuthorized);
+
             // send intial update
             await connection.NotifyAsync(BitcoinStratumMethods.SetDifficulty, new object[] { context.Difficulty });
-            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, currentJobParams);
+            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, minerJobParams);
         }
 
         else
@@ -182,6 +184,21 @@ public class WarthogPool : PoolBase
                 Disconnect(connection);
             }
         }
+    }
+
+    private object CreateWorkerJob(StratumConnection connection, bool cleanJob)
+    {
+        var context = connection.ContextAs<WarthogWorkerContext>();
+        var maxActiveJobs = extraPoolConfig?.MaxActiveJobs ?? 4;
+        var job = manager.GetJobForStratum();
+
+        // update context
+        lock(context)
+        {
+            context.AddJob(job, maxActiveJobs);
+        }
+
+        return job.GetJobParams(cleanJob);
     }
 
     protected virtual async Task OnSubmitAsync(StratumConnection connection, Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
@@ -286,13 +303,14 @@ public class WarthogPool : PoolBase
         await Guard(() => ForEachMinerAsync(async (connection, ct) =>
         {
             var context = connection.ContextAs<WarthogWorkerContext>();
+            var minerJobParams = CreateWorkerJob(connection, (bool) ((object[]) jobParams)[^1]);
 
             // varDiff: if the client has a pending difficulty change, apply it now
             if(context.ApplyPendingDifficulty())
                 await connection.NotifyAsync(BitcoinStratumMethods.SetDifficulty, new object[] { context.Difficulty });
 
             // send job
-            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, currentJobParams);
+            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, minerJobParams);
         }));
     }
 
@@ -402,8 +420,10 @@ public class WarthogPool : PoolBase
 
         if(connection.Context.ApplyPendingDifficulty())
         {
+            var minerJobParams = CreateWorkerJob(connection, (bool) ((object[]) currentJobParams)[^1]);
+
             await connection.NotifyAsync(BitcoinStratumMethods.SetDifficulty, new object[] { connection.Context.Difficulty });
-            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, currentJobParams);
+            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, minerJobParams);
         }
     }
 

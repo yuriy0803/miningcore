@@ -193,6 +193,23 @@ public class ConcealJobManager : JobManagerBase<ConcealJob>
         return true;
     }
 
+    public void PrepareWorkerJob(ConcealWorkerJob workerJob, out string blob, out string target)
+    {
+        blob = null;
+        target = null;
+
+        var job = currentJob;
+
+        if(job != null)
+            job.PrepareWorkerJob(workerJob, out blob, out target);
+    }
+
+    public override ConcealJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
+    }
+
     #region API-Surface
 
     public IObservable<Unit> Blocks { get; private set; }
@@ -283,22 +300,6 @@ public class ConcealJobManager : JobManagerBase<ConcealJob>
     }
 
     public BlockchainStats BlockchainStats { get; } = new();
-
-    public void PrepareWorkerJob(ConcealWorkerJob workerJob, out string blob, out string target)
-    {
-        blob = null;
-        target = null;
-
-        var job = currentJob;
-
-        if(job != null)
-        {
-            lock(job)
-            {
-                job.PrepareWorkerJob(workerJob, out blob, out target);
-            }
-        }
-    }
 
     public async ValueTask<Share> SubmitShareAsync(StratumConnection worker,
         ConcealSubmitShareRequest request, ConcealWorkerJob workerJob, CancellationToken ct)
@@ -473,30 +474,32 @@ public class ConcealJobManager : JobManagerBase<ConcealJob>
 
         do
         {
-            var request = new GetBlockTemplateRequest
+            try
             {
-                WalletAddress = poolConfig.Address,
-                ReserveSize = ConcealConstants.ReserveSize
-            };
+                var request = new GetBlockTemplateRequest
+                {
+                    WalletAddress = poolConfig.Address,
+                    ReserveSize = ConcealConstants.ReserveSize
+                };
 
-            var response = await rpc.ExecuteAsync<GetBlockTemplateResponse>(logger,
-                ConcealCommands.GetBlockTemplate, ct, request);
-            
-            if(response.Error != null)
-                logger.Debug(() => $"conceald daemon response: {response.Error.Message} (Code {response.Error.Code})");
+                var response = await rpc.ExecuteAsync<GetBlockTemplateResponse>(logger,
+                    ConcealCommands.GetBlockTemplate, ct, request);
 
-            var info = await walletRpc.ExecuteAsync<GetStatusResponse>(logger,
-                ConcealWalletCommands.GetStatus, ct, new {});
+                if(response.Error != null)
+                    logger.Debug(() => $"conceald daemon response: {response.Error.Message} (Code {response.Error.Code})");
 
-            if(info.Error != null)
-                logger.Debug(() => $"walletd daemon response: {info.Error.Message} (Code {info.Error.Code})");
+                var info = await restClient.Get<GetInfoResponse>(ConcealConstants.DaemonRpcGetInfoLocation, ct);
 
-            var isSynched = ((response.Error is not {Code: -9}) && (info.Response?.BlockCount >= info.Response?.KnownBlockCount));
+                if((response.Error is not {Code: -9}) && (response.Response?.Height >= info.Height))
+                {
+                    logger.Info(() => "All daemons synched with blockchain");
+                    break;
+                }
+            }
 
-            if(isSynched)
+            catch(Exception e)
             {
-                logger.Info(() => "All daemons synched with blockchain");
-                break;
+                logger.Error(e);
             }
 
             if(!syncPendingNotificationShown)

@@ -40,7 +40,6 @@ public class AlephiumPool : PoolBase
     {
     }
 
-    protected AlephiumJobParams currentJobParams;
     protected AlephiumJobManager manager;
     private AlephiumPoolConfigExtra extraPoolConfig;
     private AlephiumCoinTemplate coin;
@@ -71,7 +70,7 @@ public class AlephiumPool : PoolBase
         // [Respect the goddamn standards Nicehack :(]
         var response = new JsonRpcResponse<object[]>(data, request.Id);
 
-        if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent) || manager.ValidateIsIceRiverMiner(context.UserAgent))
+        if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
         {
             response.Extra = new Dictionary<string, object>();
             response.Extra["error"] = null;
@@ -105,7 +104,7 @@ public class AlephiumPool : PoolBase
         // [Respect the goddamn standards Nicehack :(]
         var response = new JsonRpcResponse<object>(connection.ConnectionId, request.Id);
 
-        if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent) || manager.ValidateIsIceRiverMiner(context.UserAgent))
+        if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
         {
             response.Extra = new Dictionary<string, object>();
             response.Extra["error"] = null;
@@ -156,7 +155,7 @@ public class AlephiumPool : PoolBase
             // [Respect the goddamn standards Nicehack :(]
             var response = new JsonRpcResponse<object>(context.IsAuthorized, request.Id);
 
-            if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent) || manager.ValidateIsIceRiverMiner(context.UserAgent))
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
             {
                 response.Extra = new Dictionary<string, object>();
                 response.Extra["error"] = null;
@@ -201,11 +200,10 @@ public class AlephiumPool : PoolBase
                 logger.Info(() => $"[{connection.ConnectionId}] Setting static difficulty of {staticDiff.Value}");
             }
 
-            // send initial difficulty
-            await connection.NotifyAsync(AlephiumStratumMethods.SetDifficulty, new object[] { context.Difficulty });
+            var minerJobParams = CreateWorkerJob(connection);
 
-            // send intial job
-            await SendJob(connection, context, currentJobParams);
+            // send intial update
+            await SendJob(connection, context, minerJobParams);
         }
 
         else
@@ -222,6 +220,21 @@ public class AlephiumPool : PoolBase
                 Disconnect(connection);
             }
         }
+    }
+
+    private AlephiumJobParams CreateWorkerJob(StratumConnection connection)
+    {
+        var context = connection.ContextAs<AlephiumWorkerContext>();
+        var maxActiveJobs = extraPoolConfig?.MaxActiveJobs ?? 8;
+        var job = manager.GetJobForStratum();
+
+        // update context
+        lock(context)
+        {
+            context.AddJob(job, maxActiveJobs);
+        }
+
+        return job.GetJobParams();
     }
 
     protected virtual async Task OnSubmitAsync(StratumConnection connection, Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
@@ -262,7 +275,7 @@ public class AlephiumPool : PoolBase
             // [Respect the goddamn standards Nicehack :(]
             var response = new JsonRpcResponse<object>(true, request.Id);
 
-            if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent) || manager.ValidateIsIceRiverMiner(context.UserAgent))
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
             {
                 response.Extra = new Dictionary<string, object>();
                 response.Extra["error"] = null;
@@ -307,19 +320,14 @@ public class AlephiumPool : PoolBase
 
     protected virtual async Task OnNewJobAsync(AlephiumJobParams jobParams)
     {
-        currentJobParams = jobParams;
-
         logger.Info(() => $"Broadcasting job {jobParams.JobId}");
 
         await Guard(() => ForEachMinerAsync(async (connection, ct) =>
         {
             var context = connection.ContextAs<AlephiumWorkerContext>();
+            var minerJobParams = CreateWorkerJob(connection);
 
-            // varDiff: if the client has a pending difficulty change, apply it now
-            if(context.ApplyPendingDifficulty())
-                await connection.NotifyAsync(AlephiumStratumMethods.SetDifficulty, new object[] { context.Difficulty });
-
-            await SendJob(connection, context, currentJobParams);
+            await SendJob(connection, context, minerJobParams);
         }));
     }
 
@@ -337,6 +345,9 @@ public class AlephiumPool : PoolBase
             TxsBlob = jobParams.TxsBlob,
             TargetBlob = target,
         };
+
+        // send difficulty
+        await connection.NotifyAsync(AlephiumStratumMethods.SetDifficulty, new object[] { context.Difficulty });
 
         // send job
         await connection.NotifyAsync(AlephiumStratumMethods.MiningNotify, new object[] { jobParamsActual });
@@ -412,6 +423,7 @@ public class AlephiumPool : PoolBase
         Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
     {
         var request = tsRequest.Value;
+        var context = connection.ContextAs<AlephiumWorkerContext>();
 
         try
         {
@@ -422,9 +434,20 @@ public class AlephiumPool : PoolBase
                     break;
 
                 case AlephiumStratumMethods.Noop:
-                    var context = connection.ContextAs<AlephiumWorkerContext>();
                     context.LastActivity = clock.Now;
-                    await connection.RespondAsync("1", request.Id);
+
+                    // Nicehash's stupid validator insists on "error" property present
+                    // in successful responses which is a violation of the JSON-RPC spec
+                    // [Respect the goddamn standards Nicehack :(]
+                    var responseNoop = new JsonRpcResponse<object>("1", request.Id);
+
+                    if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
+                    {
+                        responseNoop.Extra = new Dictionary<string, object>();
+                        responseNoop.Extra["error"] = null;
+                    }
+
+                    await connection.RespondAsync(responseNoop);
                     break;
 
                 case AlephiumStratumMethods.Subscribe:
@@ -440,7 +463,18 @@ public class AlephiumPool : PoolBase
                     break;
 
                 case AlephiumStratumMethods.SetGzip:
-                    await connection.RespondAsync(false, request.Id);
+                    // Nicehash's stupid validator insists on "error" property present
+                    // in successful responses which is a violation of the JSON-RPC spec
+                    // [Respect the goddamn standards Nicehack :(]
+                    var responseSetGzip = new JsonRpcResponse<object>(false, request.Id);
+
+                    if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
+                    {
+                        responseSetGzip.Extra = new Dictionary<string, object>();
+                        responseSetGzip.Extra["error"] = null;
+                    }
+
+                    await connection.RespondAsync(responseSetGzip);
                     break;
 
                 case AlephiumStratumMethods.SubmitHashrate:
@@ -484,11 +518,9 @@ public class AlephiumPool : PoolBase
 
         if(context.ApplyPendingDifficulty())
         {
-            // send difficulty
-            await connection.NotifyAsync(AlephiumStratumMethods.SetDifficulty, new object[] { context.Difficulty });
+            var minerJobParams = CreateWorkerJob(connection);
 
-            // send job
-            await SendJob(connection, context, currentJobParams);
+            await SendJob(connection, context, minerJobParams);
         }
     }
     

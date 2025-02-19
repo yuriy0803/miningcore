@@ -61,7 +61,7 @@ public static class WarthogCommands
     public const string DaemonName = "wart-node";
     public const string DataLabel = ":data:";
 
-    public const string Websocket = "/ws/chain_delta";
+    public const string Websocket = "subscribe";
     public const string WebsocketEventBlockAppend = "blockAppend";
     public const string WebsocketEventRollback = "rollback";
 

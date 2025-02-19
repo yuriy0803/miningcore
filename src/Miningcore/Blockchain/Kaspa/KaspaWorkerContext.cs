@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 using Miningcore.Mining;
 
 namespace Miningcore.Blockchain.Kaspa;
@@ -25,13 +28,22 @@ public class KaspaWorkerContext : WorkerContextBase
     /// </summary>
     public bool IsLargeJob { get; set; } = false;
 
-    public List<KaspaJob> validJobs { get; set; } = new();
+    /// <summary>
+    /// Current N job(s) assigned to this worker
+    /// </summary>
+    public Queue<KaspaJob> validJobs { get; private set; } = new();
 
-    public void AddJob(KaspaJob job, int maxActiveJobs)
+    public virtual void AddJob(KaspaJob job, int maxActiveJobs)
     {
-        validJobs.Insert(0, job);
+        if(!validJobs.Contains(job))
+            validJobs.Enqueue(job);
 
         while(validJobs.Count > maxActiveJobs)
-            validJobs.RemoveAt(validJobs.Count - 1);
+            validJobs.Dequeue();
+    }
+
+    public KaspaJob GetJob(string jobId)
+    {
+        return validJobs.ToArray().FirstOrDefault(x => x.JobId == jobId);
     }
 }

@@ -75,14 +75,13 @@
             }
         ],
         "protobufWalletRpcServiceName": "kaspawalletd.kaspawalletd",
+        "enableAsicBoost": true,
         "clientConnectionTimeout": 600,
         "banning": {
             "enabled": true,
             "time": 600,
             "invalidPercent": 50,
-            "checkThreshold": 50,
-            "minerEffortPercent": 0.00000000465661287,
-            "minerEffortTime": 259200
+            "checkThreshold": 50
         },
         "ports": {
             "3094": {

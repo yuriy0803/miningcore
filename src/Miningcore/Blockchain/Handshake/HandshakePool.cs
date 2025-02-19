@@ -49,7 +49,7 @@ public class HandshakePool : PoolBase
         if(request.Id == null)
             throw new StratumException(StratumError.MinusOne, "missing request id");
 
-        var context = connection.ContextAs<BitcoinWorkerContext>();
+        var context = connection.ContextAs<HandshakeWorkerContext>();
         var requestParams = request.ParamsAs<string[]>();
 
         if(requestParams?.Length < 1)
@@ -71,8 +71,19 @@ public class HandshakePool : PoolBase
 
         if(context.IsAuthorized)
         {
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+            var response = new JsonRpcResponse<object>(context.IsAuthorized, request.Id);
+
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+
             // respond
-            await connection.RespondAsync(context.IsAuthorized, request.Id);
+            await connection.RespondAsync(response);
 
             // log association
             logger.Info(() => $"[{connection.ConnectionId}] Authorized worker {workerValue}");
@@ -115,7 +126,7 @@ public class HandshakePool : PoolBase
         if(request.Id == null)
             throw new StratumException(StratumError.MinusOne, "missing request id");
 
-        var context = connection.ContextAs<BitcoinWorkerContext>();
+        var context = connection.ContextAs<HandshakeWorkerContext>();
         
         var requestParams = request.ParamsAs<string[]>();
 
@@ -136,7 +147,18 @@ public class HandshakePool : PoolBase
         .Concat(subscriberData)
         .ToArray();
 
-        await connection.RespondAsync(data, request.Id);
+        // Nicehash's stupid validator insists on "error" property present
+        // in successful responses which is a violation of the JSON-RPC spec
+        // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+        var response = new JsonRpcResponse<object[]>(data, request.Id);
+
+        if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
+        {
+            response.Extra = new Dictionary<string, object>();
+            response.Extra["error"] = null;
+        }
+
+        await connection.RespondAsync(response);
 
         // setup worker context
         context.IsSubscribed = true;
@@ -153,15 +175,31 @@ public class HandshakePool : PoolBase
             context.SetDifficulty(nicehashDiff.Value);
         }
 
+        var minerJobParams = CreateWorkerJob(connection, context.IsSubscribed);
+
         // send intial update
         await connection.NotifyAsync(BitcoinStratumMethods.SetDifficulty, new object[] { context.Difficulty });
-        await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, currentJobParams);
+        await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, minerJobParams);
+    }
+
+    private object CreateWorkerJob(StratumConnection connection, bool cleanJob)
+    {
+        var context = connection.ContextAs<HandshakeWorkerContext>();
+        var job = manager.GetJobForStratum();
+
+        // update context
+        lock(context)
+        {
+            context.AddJob(job, manager.maxActiveJobs);
+        }
+
+        return job.GetJobParams();
     }
 
     protected virtual async Task OnSubmitAsync(StratumConnection connection, Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
     {
         var request = tsRequest.Value;
-        var context = connection.ContextAs<BitcoinWorkerContext>();
+        var context = connection.ContextAs<HandshakeWorkerContext>();
 
         try
         {
@@ -190,7 +228,19 @@ public class HandshakePool : PoolBase
 
             // submit
             var share = await manager.SubmitShareAsync(connection, requestParams, ct);
-            await connection.RespondAsync(true, request.Id);
+
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+            var response = new JsonRpcResponse<object>(true, request.Id);
+
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+
+            await connection.RespondAsync(response);
 
             // publish
             messageBus.SendMessage(share);
@@ -229,7 +279,7 @@ public class HandshakePool : PoolBase
     protected virtual async Task OnGetTransactionsAsync(StratumConnection connection, Timestamped<JsonRpcRequest> tsRequest, CancellationToken ct)
     {
         var request = tsRequest.Value;
-        var context = connection.ContextAs<BitcoinWorkerContext>();
+        var context = connection.ContextAs<HandshakeWorkerContext>();
 
         try
         {
@@ -249,7 +299,19 @@ public class HandshakePool : PoolBase
 
             // get transactions
             var transactions = manager.GetTransactions(connection, requestParams);
-            await connection.RespondAsync(transactions, request.Id);
+
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+            var response = new JsonRpcResponse<object[]>(transactions, request.Id);
+
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+
+            await connection.RespondAsync(response);
         }
 
         catch(StratumException ex)
@@ -268,14 +330,15 @@ public class HandshakePool : PoolBase
 
         await Guard(() => ForEachMinerAsync(async (connection, ct) =>
         {
-            var context = connection.ContextAs<BitcoinWorkerContext>();
+            var context = connection.ContextAs<HandshakeWorkerContext>();
+            var minerJobParams = CreateWorkerJob(connection, true);
 
             // varDiff: if the client has a pending difficulty change, apply it now
             if(context.ApplyPendingDifficulty())
                 await connection.NotifyAsync(BitcoinStratumMethods.SetDifficulty, new object[] { context.Difficulty });
 
             // send job
-            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, currentJobParams);
+            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, minerJobParams);
         }));
     }
 
@@ -342,7 +405,7 @@ public class HandshakePool : PoolBase
 
     protected override WorkerContextBase CreateWorkerContext()
     {
-        return new BitcoinWorkerContext();
+        return new HandshakeWorkerContext();
     }
 
     protected override async Task OnRequestAsync(StratumConnection connection,
@@ -390,8 +453,10 @@ public class HandshakePool : PoolBase
 
         if(connection.Context.ApplyPendingDifficulty())
         {
+            var minerJobParams = CreateWorkerJob(connection, true);
+
             await connection.NotifyAsync(BitcoinStratumMethods.SetDifficulty, new object[] { connection.Context.Difficulty });
-            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, currentJobParams);
+            await connection.NotifyAsync(BitcoinStratumMethods.MiningNotify, minerJobParams);
         }
     }
 

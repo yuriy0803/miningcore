@@ -94,15 +94,6 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
                     ShareMultiplier, coin.CoinbaseHasherValue, coin.HeaderHasherValue,
                     !isPoS ? coin.BlockHasherValue : coin.PoSBlockHasherValue ?? coin.BlockHasherValue);
 
-                lock(jobLock)
-                {
-                    validJobs.Insert(0, job);
-
-                    // trim active jobs
-                    while(validJobs.Count > maxActiveJobs)
-                        validJobs.RemoveAt(validJobs.Count - 1);
-                }
-
                 if(isNew)
                 {
                     if(via != null)
@@ -151,6 +142,12 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
         return job?.GetJobParams();
     }
 
+    public override HandshakeJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
+    }
+
     protected override void ConfigureDaemons()
     {
         if(clusterConfig.PaymentProcessing?.Enabled == true && poolConfig.PaymentProcessing?.Enabled == true)
@@ -184,7 +181,7 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
     {
         Contract.RequiresNonNull(worker);
 
-        var context = worker.ContextAs<BitcoinWorkerContext>();
+        var context = worker.ContextAs<HandshakeWorkerContext>();
 
         // assign unique ExtraNonce1 to worker (miner)
         context.ExtraNonce1 = extraNonceProvider.Next();
@@ -208,7 +205,7 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
         if(submission is not object[] submitParams)
             throw new StratumException(StratumError.Other, "invalid params");
 
-        var context = worker.ContextAs<BitcoinWorkerContext>();
+        var context = worker.ContextAs<HandshakeWorkerContext>();
 
         // extract params
         var workerValue = (submitParams[0] as string)?.Trim();
@@ -222,9 +219,9 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
 
         HandshakeJob job;
 
-        lock(jobLock)
+        lock(context)
         {
-            job = validJobs.FirstOrDefault(x => x.JobId == jobId);
+            job = context.GetJob(jobId);
         }
 
         if(job == null)
@@ -281,6 +278,8 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
         if(submission is not object[] submitParams)
             throw new StratumException(StratumError.Other, "invalid params");
 
+        var context = worker.ContextAs<HandshakeWorkerContext>();
+
         // extract params
         var jobId = submitParams[0] as string;
 
@@ -289,9 +288,9 @@ public class HandshakeJobManager : BitcoinJobManagerBase<HandshakeJob>
 
         HandshakeJob job;
 
-        lock(jobLock)
+        lock(context)
         {
-            job = validJobs.FirstOrDefault(x => x.JobId == jobId);
+            job = context.GetJob(jobId);
         }
 
         if(job == null)

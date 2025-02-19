@@ -905,7 +905,8 @@
         "explorerBlockLink": "https://blockchair.com/ecash/block/$height$",
         "explorerTxLink": "https://blockchair.com/ecash/transaction/{0}",
         "explorerAccountLink": "https://blockchair.com/ecash/address/{0}",
-        "hasMinerFund": true
+        "hasMinerFund": true,
+        "hasCoinbaseStakingReward": true
     },
     "emark": {
         "name": "Deutsche eMark",
@@ -2291,6 +2292,38 @@
         "explorerBlockLink": "https://explorer.globalsocialpost.com/block/$height$",
         "explorerTxLink": "https://explorer.globalsocialpost.com/tx/{0}",
         "explorerAccountLink": "https://explorer.globalsocialpost.com/address/{0}"
+    },
+    "fortuneblock": {
+        "name": "Fortuneblock",
+        "canonicalName": "Fortuneblock",
+        "symbol": "FTB",
+        "family": "bitcoin",
+        "website": "https://fortuneblock.xyz/",
+        "market": "",
+        "twitter": "https://x.com/Fortune_Block",
+        "telegram": "",
+        "discord": "https://discord.gg/g4rwqYHkmd",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "mike"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasFortuneReward": true,
+        "hasMasterNodes": true,
+        "hasSmartNodes": true,
+        "shareMultiplier": 65536,
+        "explorerBlockLink": "https://explorer.fortuneblock.xyz/block/$hash$",
+        "explorerTxLink": "https://explorer.fortuneblock.xyz/tx/{0}",
+        "explorerAccountLink": "https://explorer.fortuneblock.xyz/address/{0}"
     },
     "radiant": {
         "name": "Radiant",
@@ -4752,6 +4785,34 @@
         "explorerBlockLink": "https://explorer.zephyrprotocol.com/block/$height$",
         "explorerTxLink": "https://explorer.zephyrprotocol.com/tx/{0}"
     },
+     "zano": {
+        "name": "Zano",
+        "canonicalName": "Zano",
+        "symbol": "ZANO",
+        "family": "zano",
+        "website": "https://zano.org/",
+        "market": "https://www.coingecko.com/en/coins/zano",
+        "twitter": "https://twitter.com/zano_project",
+        "telegram": "https://t.me/zanocoin",
+        "discord": "https://discord.gg/wE3rmYY",
+        "hash": "progpowz",
+        "hashVariant": 2,
+        "blobType": 0,
+        "difficultyTarget": 120,
+        "smallestUnit": 1000000000000,
+        "addressPrefix": 197,
+        "addressPrefixTestnet": 197,
+        "addressPrefixIntegrated": 13944,
+        "addressPrefixIntegratedTestnet": 13944,
+        "addressV2PrefixIntegrated": 14072,
+        "addressV2PrefixIntegratedTestnet": 14072,
+        "auditableAddressPrefix": 39112,
+        "auditableAddressPrefixTestnet": 39112,
+        "auditableAddressIntegratedPrefix": 35401,
+        "auditableAddressIntegratedPrefixTestnet": 35401,
+        "explorerBlockLink": "https://explorer.zano.org/block/$hash$",
+        "explorerTxLink": "https://explorer.zano.org/transaction/{0}"
+    },
     "callisto": {
         "name": "Callisto Network",
         "canonicalName": "Callisto-Network",
@@ -4768,6 +4829,25 @@
         },
         "explorerTxLink": "https://explorer.callisto.network/tx/{0}",
         "explorerAccountLink": "https://explorer.callisto.network/address/{0}",
+        "ethasher": "ethash"
+    },
+    "cortex": {
+        "name": "Cortex Blockchain",
+        "canonicalName": "Cortex Blockchain",
+        "symbol": "CTXC",
+        "family": "ethereum",
+        "website": "https://www.cortexlabs.ai/",
+        "market": "https://www.coingecko.com/en/coins/cortex",
+        "twitter": "https://twitter.com/CTXCBlockchain",
+        "telegram": "http://t.me/CortexOfficialEN",
+        "discord": "",
+        "explorerBlockLinks": {
+            "block": "https://ansible.cortexlabs.ai/block/$height$",
+            "uncle": "https://ansible.cortexlabs.ai/block/$height$"
+        },
+        "explorerTxLink": "https://ansible.cortexlabs.ai/tx/{0}",
+        "explorerAccountLink": "https://ansible.cortexlabs.ai/address/{0}",
+        "rpcMethodPrefix": "ctxc",
         "ethasher": "ethash"
     },
     "ethereum": {
@@ -5244,5 +5324,19 @@
         "explorerBlockLink": "https://wartscan.io/block/$height$",
         "explorerTxLink": "https://wartscan.io/tx/{0}",
         "explorerAccountLink": "https://wartscan.io/account/{0}"
+    },
+    "xelis": {
+        "name": "Xelis",
+        "canonicalName": "Xelis",
+        "symbol": "XEL",
+        "family": "xelis",
+        "website": "https://xelis.io/",
+        "market": "https://www.coingecko.com/en/coins/xelis",
+        "twitter": "https://twitter.com/xelis_project",
+        "telegram": "https://t.me/xelis_io",
+        "discord": "https://discord.com/invite/z543umPUdj",
+        "explorerBlockLink": "https://explorer.xelis.io/blocks/$height$",
+        "explorerTxLink": "https://explorer.xelis.io/txs/{0}",
+        "explorerAccountLink": "https://explorer.xelis.io/accounts/{0}"
     }
 }

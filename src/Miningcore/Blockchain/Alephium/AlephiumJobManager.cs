@@ -47,7 +47,6 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
     private AlephiumCoinTemplate coin;
     private AlephiumClient rpc;
     private string network;
-    private readonly List<AlephiumJob> validJobs = new();
     private readonly IExtraNonceProvider extraNonceProvider;
     private readonly IMasterClock clock;
     private AlephiumPoolConfigExtra extraPoolConfig;
@@ -342,15 +341,6 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
 
                         job.Init(blockTemplate);
 
-                        lock(jobLock)
-                        {
-                            validJobs.Insert(0, job);
-
-                            // trim active jobs
-                            while(validJobs.Count > maxActiveJobs)
-                                validJobs.RemoveAt(validJobs.Count - 1);
-                        }
-
                         if(via != null)
                             logger.Info(() => $"Detected new block {job.BlockTemplate.Height} on chain[{job.BlockTemplate.ChainIndex}] [{via}]");
                         else
@@ -530,9 +520,20 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
 
         AlephiumJob job;
 
-        lock(jobLock)
+        lock(context)
         {
-            job = validJobs.FirstOrDefault(x => x.JobId == jobId);
+            job = context.GetJob(jobId);
+
+            if(job == null)
+            {
+                // stupid hack for busted ass IceRiver ASICs. Need to loop
+                // through job using blockTemplate "FromGroup" & "ToGroup" because they submit jobs with incorrect IDs
+                if(ValidateIsIceRiverMiner(context.UserAgent))
+                    job = context.validJobs.ToArray().FirstOrDefault(x => x.BlockTemplate.FromGroup == submitParams.FromGroup && x.BlockTemplate.ToGroup == submitParams.ToGroup);
+            }
+
+            if(job == null)
+                logger.Warn(() => $"[{context.Miner}] => jobId: {jobId} - Last known job: {context.validJobs.ToArray().FirstOrDefault()?.JobId}");
         }
 
         if(job == null)
@@ -798,6 +799,12 @@ public class AlephiumJobManager : JobManagerBase<AlephiumJob>
     {
         var job = currentJob;
         return job?.GetJobParams();
+    }
+
+    public override AlephiumJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
     }
 
     #endregion // Overrides

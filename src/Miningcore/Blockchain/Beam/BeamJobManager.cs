@@ -65,7 +65,6 @@ public class BeamJobManager : JobManagerBase<BeamJob>
     private readonly IMasterClock clock;
     private readonly IExtraNonceProvider extraNonceProvider;
     protected int maxActiveJobs = 4;
-    private readonly List<BeamJob> validJobs = new();
     private BeamPoolConfigExtra extraPoolConfig;
     public ulong? Forkheight;
     public ulong? Forkheight2;
@@ -227,15 +226,6 @@ public class BeamJobManager : JobManagerBase<BeamJob>
 
                 job.Init(blockTemplate, blockTemplate.JobId, poolConfig, clusterConfig, clock, solver);
 
-                lock(jobLock)
-                {
-                    validJobs.Insert(0, job);
-
-                    // trim active jobs
-                    while(validJobs.Count > maxActiveJobs)
-                        validJobs.RemoveAt(validJobs.Count - 1);
-                }
-                
                 currentJob = job;
 
                 if(via != null)
@@ -412,6 +402,12 @@ public class BeamJobManager : JobManagerBase<BeamJob>
         return job?.GetJobParamsForStratum() ?? Array.Empty<object>();
     }
 
+    public override BeamJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
+    }
+
     #region API-Surface
     
     public IObservable<object[]> Jobs { get; private set; }
@@ -505,12 +501,14 @@ public class BeamJobManager : JobManagerBase<BeamJob>
         Contract.RequiresNonNull(JobId);
         Contract.RequiresNonNull(nonce);
         Contract.RequiresNonNull(solution);
+
+        var context = worker.ContextAs<BeamWorkerContext>();
         
         BeamJob job;
 
-        lock(jobLock)
+        lock(context)
         {
-            job = validJobs.FirstOrDefault(x => x.JobId == JobId);
+            job = context.GetJob(JobId);
         }
 
         if(job == null)
@@ -521,8 +519,6 @@ public class BeamJobManager : JobManagerBase<BeamJob>
         
         if (stratumError != BeamConstants.BeamRpcShareAccepted)
             return (share, stratumError);
-        
-        var context = worker.ContextAs<BeamWorkerContext>();
         
         // enrich share with common data
         share.PoolId = poolConfig.Id;

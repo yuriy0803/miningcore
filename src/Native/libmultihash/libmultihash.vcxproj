@@ -311,6 +311,10 @@
     <ClInclude Include="flex\cryptonote\crypto\oaes_lib.h" />
     <ClInclude Include="flex\cryptonote\crypto\skein_port.h" />
     <ClInclude Include="flex\cryptonote\crypto\variant2_int_sqrt.h" />
+    <ClInclude Include="chacha20\chacha20.h" />
+    <ClInclude Include="xelishash\aes.h" />
+    <ClInclude Include="xelishash\crc32.h" />
+    <ClInclude Include="xelishash\xelishash.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="allium.c" />
@@ -445,6 +449,9 @@
     <ClCompile Include="flex\cryptonote\crypto\c_skein.c" />
     <ClCompile Include="flex\cryptonote\crypto\hash.c" />
     <ClCompile Include="flex\cryptonote\crypto\oaes_lib.c" />
+    <ClCompile Include="chacha20\chacha20.c" />
+    <ClCompile Include="xelishash\xelishashv1.cpp" />
+    <ClCompile Include="xelishash\xelishashv2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="equi\crypto\equihash.tcc" />

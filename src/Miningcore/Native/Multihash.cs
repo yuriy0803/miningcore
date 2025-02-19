@@ -222,4 +222,10 @@ public static unsafe class Multihash
 
     [DllImport("libmultihash", EntryPoint = "fishhaskarlsen_hash", CallingConvention = CallingConvention.Cdecl)]
     public static extern void fishhaskarlsen(void* output, IntPtr context, byte* input, uint inputLength, byte fishHashKernel = 1);
+
+    [DllImport("libmultihash", EntryPoint = "xelis_hash_export", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void xelishash(byte* input, void* output, uint inputLength);
+
+    [DllImport("libmultihash", EntryPoint = "xelis_hash_v2_export", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void xelishashv2(byte* input, void* output, uint inputLength);
 }

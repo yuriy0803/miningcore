@@ -334,6 +334,42 @@ public partial class WarthogCoinTemplate
     #endregion
 }
 
+public partial class XelisCoinTemplate
+{
+    #region Overrides of CoinTemplate
+
+    public override string GetAlgorithmName()
+    {
+        return "XelisHash";
+    }
+
+    #endregion
+}
+
+public partial class ZanoCoinTemplate
+{
+    #region Overrides of CoinTemplate
+
+    public ZanoCoinTemplate() : base()
+    {
+        progpowLightValue = new Lazy<IProgpowLight>(() =>
+            ProgpowFactory.GetProgpow(Symbol, ComponentContext, Hash.ToString().ToLower()));
+    }
+
+    private readonly Lazy<IProgpowLight> progpowLightValue;
+
+    public IComponentContext ComponentContext { get; [UsedImplicitly] init; }
+
+    public IProgpowLight ProgpowHasher => progpowLightValue.Value;
+
+    public override string GetAlgorithmName()
+    {
+        return Hash.ToString();
+    }
+
+    #endregion
+}
+
 public partial class PoolConfig
 {
     /// <summary>

@@ -260,6 +260,23 @@ public class CryptonoteJobManager : JobManagerBase<CryptonoteJob>
         return true;
     }
 
+    public void PrepareWorkerJob(CryptonoteWorkerJob workerJob, out string blob, out string target)
+    {
+        blob = null;
+        target = null;
+
+        var job = currentJob;
+
+        if(job != null)
+            job.PrepareWorkerJob(workerJob, out blob, out target);
+    }
+
+    public override CryptonoteJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
+    }
+
     #region API-Surface
 
     public IObservable<Unit> Blocks { get; private set; }
@@ -354,22 +371,6 @@ public class CryptonoteJobManager : JobManagerBase<CryptonoteJob>
     }
 
     public BlockchainStats BlockchainStats { get; } = new();
-
-    public void PrepareWorkerJob(CryptonoteWorkerJob workerJob, out string blob, out string target)
-    {
-        blob = null;
-        target = null;
-
-        var job = currentJob;
-
-        if(job != null)
-        {
-            lock(job)
-            {
-                job.PrepareWorkerJob(workerJob, out blob, out target);
-            }
-        }
-    }
 
     public async ValueTask<Share> SubmitShareAsync(StratumConnection worker,
         CryptonoteSubmitShareRequest request, CryptonoteWorkerJob workerJob, CancellationToken ct)
@@ -620,6 +621,25 @@ public class CryptonoteJobManager : JobManagerBase<CryptonoteJob>
                     ex=> logger.Error(ex))))
             .Concat()
             .Subscribe();
+
+        if(poolConfig.EnableInternalStratum == true)
+        {
+            // make sure we have a current light cache
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+
+            do
+            {
+                var blockTemplate = await GetBlockTemplateAsync(ct);
+
+                if(blockTemplate?.Response != null)
+                {
+                    UpdateHashParams(blockTemplate.Response);
+                    break;
+                }
+
+                logger.Info(() => "Waiting for first valid block template");
+            } while(await timer.WaitForNextTickAsync(ct));
+        }
 
         SetupJobUpdates(ct);
     }

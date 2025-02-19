@@ -36,6 +36,7 @@ public class WarthogJob
     #region API-Surface
 
     public WarthogBlockTemplate BlockTemplate { get; protected set; }
+    public string PrevHash { get; protected set; }
     public double Difficulty { get; protected set; }
     public WarthogNetworkType network { get; protected set; }
     public bool IsJanusHash { get; protected set; }
@@ -245,7 +246,7 @@ public class WarthogJob
         }
     }
 
-    public virtual void Init(WarthogBlockTemplate blockTemplate, string jobId, IMasterClock clock, WarthogNetworkType network, bool isJanusHash)
+    public virtual void Init(WarthogBlockTemplate blockTemplate, string jobId, IMasterClock clock, WarthogNetworkType network, bool isJanusHash, string prevHash)
     {
         Contract.RequiresNonNull(blockTemplate);
         Contract.RequiresNonNull(clock);
@@ -261,8 +262,10 @@ public class WarthogJob
 
         Difficulty = BlockTemplate.Data.Difficulty;
 
+        PrevHash = prevHash;
+        prevHashBytes = PrevHash.HexToByteArray();
+
         var headerBytes = BlockTemplate.Data.Header.HexToByteArray();
-        prevHashBytes = headerBytes.Take(WarthogConstants.HeaderOffsetTarget - WarthogConstants.HeaderOffsetPrevHash).ToArray();
         nBitsBytes = headerBytes.Skip(WarthogConstants.HeaderOffsetTarget).Take(WarthogConstants.HeaderOffsetMerkleRoot - WarthogConstants.HeaderOffsetTarget).ToArray();
         //merkleRootBytes = headerBytes.Skip(WarthogConstants.HeaderOffsetMerkleRoot).Take(WarthogConstants.HeaderOffsetVersion - WarthogConstants.HeaderOffsetMerkleRoot).ToArray();
         versionBytes = headerBytes.Skip(WarthogConstants.HeaderOffsetVersion).Take(WarthogConstants.HeaderOffsetTimestamp - WarthogConstants.HeaderOffsetVersion).ToArray();
@@ -275,7 +278,7 @@ public class WarthogJob
         jobParams = new object[]
         {
             JobId,
-            prevHashBytes.ToHexString(),
+            PrevHash,
             BlockTemplate.Data.MerklePrefix,
             //uint.Parse(versionBytes.ToHexString(), NumberStyles.HexNumber),
             versionBytes.ToHexString(),

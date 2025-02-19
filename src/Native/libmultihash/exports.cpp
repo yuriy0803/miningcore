@@ -65,6 +65,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "shake/cshake.h"
 #include "shake/shake.h"
 #include "flex/flex.h"
+#include "xelishash/xelishash.hpp"
 
 #ifdef _WIN32
 #include "blake2/ref/blake2.h"
@@ -443,4 +444,14 @@ extern "C" MODULE_API void allium_export(const char *input, char *output, uint32
 extern "C" MODULE_API void flex_export(const char *input, char *output)
 {
     flex_hash(input, output);
+}
+
+extern "C" MODULE_API void xelis_hash_export(const unsigned char *input, unsigned char *output, uint32_t input_len)
+{
+    xelis_hash(input, input_len, output);
+}
+
+extern "C" MODULE_API void xelis_hash_v2_export(const unsigned char *input, unsigned char *output, uint32_t input_len)
+{
+    xelis_hash_v2(input, input_len, output);
 }

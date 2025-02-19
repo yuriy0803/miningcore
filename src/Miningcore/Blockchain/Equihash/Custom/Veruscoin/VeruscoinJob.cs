@@ -232,7 +232,7 @@ public class VeruscoinJob : EquihashJob
     protected override (Share Share, string BlockHex) ProcessShareInternal(StratumConnection worker, string nonce,
         uint nTime, string solution)
     {
-        var context = worker.ContextAs<BitcoinWorkerContext>();
+        var context = worker.ContextAs<EquihashWorkerContext>();
         var solutionBytes = (Span<byte>) solution.HexToByteArray();
 
         // serialize block-header
@@ -477,7 +477,7 @@ public class VeruscoinJob : EquihashJob
         Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(nTime));
         Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(solution));
 
-        var context = worker.ContextAs<BitcoinWorkerContext>();
+        var context = worker.ContextAs<EquihashWorkerContext>();
 
         // validate nTime
         if(nTime.Length != 8)

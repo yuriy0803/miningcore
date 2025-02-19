@@ -526,6 +526,18 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
         return succeed;
     }
 
+    private object[] GetJobParamsForStratum()
+    {
+        var job = currentJob;
+        return job?.GetJobParams();
+    }
+
+    public override KaspaJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
+    }
+
     #region API-Surface
 
     public IObservable<object[]> Jobs { get; private set; }
@@ -576,7 +588,7 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
 
         lock(context)
         {
-            job = context.validJobs.FirstOrDefault(x => x.JobId == jobId);
+            job = context.GetJob(jobId);
 
             if(job == null)
             {
@@ -584,11 +596,11 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
                 // through job history because they submit jobs with incorrect IDs
                 // https://github.com/rdugan/kaspa-stratum-bridge/blob/main/src/kaspastratum/share_handler.go#L216
                 if(ValidateIsGodMiner(context.UserAgent) || ValidateIsIceRiverMiner(context.UserAgent))
-                    job = context.validJobs.FirstOrDefault(x => Int64.Parse(x.JobId) < Int64.Parse(jobId));
+                    job = context.validJobs.ToArray().FirstOrDefault(x => Int64.Parse(x.JobId) < Int64.Parse(jobId));
             }
 
             if(job == null)
-                logger.Warn(() => $"[{context.Miner}] => jobId: {jobId} - Last known job: {context.validJobs.FirstOrDefault()?.JobId}");
+                logger.Warn(() => $"[{context.Miner}] => jobId: {jobId} - Last known job: {context.validJobs.ToArray().FirstOrDefault()?.JobId}");
         }
 
         if(job == null)
@@ -730,13 +742,13 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
             network = currentNetwork.GetCurrentNetworkResponse.CurrentNetwork;
             break;
         }
-        
+
         var (kaspaAddressUtility, errorKaspaAddressUtility) = KaspaUtils.ValidateAddress(poolConfig.Address, network, coin);
         if(errorKaspaAddressUtility != null)
             throw new PoolStartupException($"Pool address: {poolConfig.Address} is invalid for network [{network}]: {errorKaspaAddressUtility}", poolConfig.Id);
         else
             logger.Info(() => $"Pool address: {poolConfig.Address} => {KaspaConstants.KaspaAddressType[kaspaAddressUtility.KaspaAddress.Version()]}");
-        
+
         // update stats
         BlockchainStats.NetworkType = network;
         BlockchainStats.RewardType = "POW";
@@ -763,7 +775,7 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
         {
             // we need a call to communicate with kaspadWallet
             var call = walletRpc.ShowAddressesAsync(new kaspaWalletd.ShowAddressesRequest(), null, null, ct);
-            
+
             // check configured address belongs to wallet
             var walletAddresses = await Guard(() => call.ResponseAsync,
                 ex=> throw new PoolStartupException($"Error validating pool address '{ex.GetType().Name}' : {ex}", poolConfig.Id));
@@ -772,7 +784,7 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
             if(!walletAddresses.Address.Contains(poolConfig.Address))
                 throw new PoolStartupException($"Pool address: {poolConfig.Address} is not controlled by pool wallet", poolConfig.Id);
         }
-        
+
         await UpdateNetworkStatsAsync(ct);
 
         // Periodically update network stats
@@ -792,15 +804,15 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
 
         extraPoolConfig = pc.Extra.SafeExtensionDataAs<KaspaPoolConfigExtra>();
         extraPoolPaymentProcessingConfig = pc.PaymentProcessing.Extra.SafeExtensionDataAs<KaspaPaymentProcessingConfigExtra>();
-        
+
         maxActiveJobs = extraPoolConfig?.MaxActiveJobs ?? 8;
         extraData = extraPoolConfig?.ExtraData ?? "Miningcore.developers[\"Cedric CRISPIN\"]";
-        
+
         // extract standard daemon endpoints
         daemonEndpoints = pc.Daemons
             .Where(x => string.IsNullOrEmpty(x.Category))
             .ToArray();
-        
+
         if(cc.PaymentProcessing?.Enabled == true && pc.PaymentProcessing?.Enabled == true)
         {
             // extract wallet daemon endpoints
@@ -961,18 +973,6 @@ public class KaspaJobManager : JobManagerBase<KaspaJob>
 
             await ShowDaemonSyncProgressAsync(ct);
         } while(await timer.WaitForNextTickAsync(ct));
-    }
-
-    private object[] GetJobParamsForStratum()
-    {
-        var job = currentJob;
-        return job?.GetJobParams();
-    }
-
-    public KaspaJob GetJobForStratum()
-    {
-        var job = currentJob;
-        return job;
     }
 
     #endregion // Overrides

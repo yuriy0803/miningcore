@@ -537,7 +537,7 @@ public class HandshakeJob
     protected virtual (Share Share, string BlockHex) ProcessShareInternal(
         StratumConnection worker, string extraNonce2, uint nTime, uint nonce)
     {
-        var context = worker.ContextAs<BitcoinWorkerContext>();
+        var context = worker.ContextAs<HandshakeWorkerContext>();
         var extraNonceBytes = SerializeExtranonce(context.ExtraNonce1, extraNonce2);
         
         var subHeaderBytes = SerializeSubHeader(extraNonceBytes);
@@ -767,7 +767,7 @@ public class HandshakeJob
         Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(nTime));
         Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(nonce));
 
-        var context = worker.ContextAs<BitcoinWorkerContext>();
+        var context = worker.ContextAs<HandshakeWorkerContext>();
 
         // validate nTime
         if(nTime.Length != 8)

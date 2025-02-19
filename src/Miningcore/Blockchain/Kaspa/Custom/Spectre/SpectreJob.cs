@@ -107,7 +107,8 @@ public class SpectreJob : KaspaJob
     public override void Init(kaspad.RpcBlock blockTemplate, string jobId, double shareMultiplier)
     {
         Contract.RequiresNonNull(blockTemplate);
-        Contract.RequiresNonNull(jobId);
+        Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(jobId));
+        Contract.RequiresNonNull(shareMultiplier);
         
         JobId = jobId;
         this.shareMultiplier = shareMultiplier;

@@ -33,6 +33,8 @@ using Miningcore.Crypto.Hashing.Ethash.Ethashb3;
 using Miningcore.Crypto.Hashing.Ethash.Ubqhash;
 using Miningcore.Crypto.Hashing.Progpow.Firopow;
 using Miningcore.Crypto.Hashing.Progpow.Kawpow;
+using Miningcore.Crypto.Hashing.Progpow.Meowpow;
+using Miningcore.Crypto.Hashing.Progpow.ProgpowZ;
 using Miningcore.Extensions;
 using Miningcore.Messaging;
 using Miningcore.Mining;
@@ -638,6 +640,9 @@ public class Program : BackgroundService
         Console.WriteLine(" ERGO - 9gYyuZzaSw3TiCtUkSRuS3XVDUv41EFs3dtNCFGqiEwHqpb7gkF");
         Console.WriteLine(" WART - 7795fc0fe93e7e4e232a212f00bdc8885c580a5666d39a0d");
         Console.WriteLine(" XMR  - 483zaHtMRfM7rw1dXgebhWaRR8QLgAF6w4BomAV319FVVHfdbYTLVuBRc4pQgRAnRpfy6CXvvwngK4Lo3mRKE29RRx3Jb5c");
+        Console.WriteLine(" XEL  - xel:ajnsfv065qusndt0hfsngecrnf5690drmqmc0uq0etlx8zjlcyzqq2slgvt");
+        Console.WriteLine(" CTXC - 0xbb60200d5151a4a0f9a75014e04cf61a0a9f0daf");
+        Console.WriteLine(" ZANO - ZxDKT1aqiEXPA5cDADtYEfMR1oXsRd68bby4nzUvVmnjHzzrfvjwhNdQ9yiWNeGutzg9LZdwsbP2FGB1gNpZXiYY1fCfpw33c");
         Console.WriteLine();
     }
 
@@ -826,6 +831,12 @@ public class Program : BackgroundService
         
         // Configure Kawpow
         Miningcore.Crypto.Hashing.Progpow.Kawpow.Cache.messageBus = messageBus;
+
+        // Configure Meowpow
+        Miningcore.Crypto.Hashing.Progpow.Meowpow.Cache.messageBus = messageBus;
+
+        // Configure ProgpowZ
+        Miningcore.Crypto.Hashing.Progpow.ProgpowZ.Cache.messageBus = messageBus;
     }
 
     private static async Task ConfigurePostgresCompatibilityOptions(IServiceProvider services)

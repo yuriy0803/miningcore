@@ -158,15 +158,6 @@ public class BitcoinJobManager : BitcoinJobManagerBase<BitcoinJob>
                     ShareMultiplier, coin.CoinbaseHasherValue, coin.HeaderHasherValue,
                     !isPoS ? coin.BlockHasherValue : coin.PoSBlockHasherValue ?? coin.BlockHasherValue);
 
-                lock(jobLock)
-                {
-                    validJobs.Insert(0, job);
-
-                    // trim active jobs
-                    while(validJobs.Count > maxActiveJobs)
-                        validJobs.RemoveAt(validJobs.Count - 1);
-                }
-
                 if(isNew)
                 {
                     if(via != null)
@@ -213,6 +204,12 @@ public class BitcoinJobManager : BitcoinJobManagerBase<BitcoinJob>
     {
         var job = currentJob;
         return job?.GetJobParams(isNew);
+    }
+
+    public override BitcoinJob GetJobForStratum()
+    {
+        var job = currentJob;
+        return job;
     }
 
     #region API-Surface
@@ -274,9 +271,9 @@ public class BitcoinJobManager : BitcoinJobManagerBase<BitcoinJob>
 
         BitcoinJob job;
 
-        lock(jobLock)
+        lock(context)
         {
-            job = validJobs.FirstOrDefault(x => x.JobId == jobId);
+            job = context.GetJob(jobId);
         }
 
         if(job == null)

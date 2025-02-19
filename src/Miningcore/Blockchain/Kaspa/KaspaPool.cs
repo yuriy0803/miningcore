@@ -67,7 +67,18 @@ public class KaspaPool : PoolBase
             .Concat(manager.GetSubscriberData(connection))
             .ToArray();
 
-            await connection.RespondAsync(data, request.Id);
+            // Nicehash's stupid validator insists on "error" property present
+            // in successful responses which is a violation of the JSON-RPC spec
+            // [We miss you Oliver <3 We miss you so much <3 Respect the goddamn standards Nicehash :(]
+            var response = new JsonRpcResponse<object[]>(data, request.Id);
+
+            if(poolConfig.EnableAsicBoost == true)
+            {
+                response.Extra = new Dictionary<string, object>();
+                response.Extra["error"] = null;
+            }
+
+            await connection.RespondAsync(response);
         }
         
         else
@@ -83,7 +94,7 @@ public class KaspaPool : PoolBase
             // [Respect the goddamn standards Nicehack :(]
             var response = new JsonRpcResponse<object[]>(data, request.Id);
 
-            if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent))
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
             {
                 response.Extra = new Dictionary<string, object>();
                 response.Extra["error"] = null;
@@ -142,7 +153,7 @@ public class KaspaPool : PoolBase
             // [Respect the goddamn standards Nicehack :(]
             var response = new JsonRpcResponse<object>(context.IsAuthorized, request.Id);
 
-            if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent))
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
             {
                 response.Extra = new Dictionary<string, object>();
                 response.Extra["error"] = null;
@@ -267,11 +278,12 @@ public class KaspaPool : PoolBase
             // [Respect the goddamn standards Nicehack :(]
             var response = new JsonRpcResponse<object>(true, request.Id);
 
-            if(context.IsNicehash || manager.ValidateIsGoldShell(context.UserAgent))
+            if(context.IsNicehash || poolConfig.EnableAsicBoost == true)
             {
                 response.Extra = new Dictionary<string, object>();
                 response.Extra["error"] = null;
             }
+
             await connection.RespondAsync(response);
 
             // publish

@@ -53,6 +53,8 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
     private EthereumPoolConfigExtra extraPoolConfig;
     private EthereumPoolPaymentProcessingConfigExtra extraConfig;
 
+    private EthereumCoinTemplate coin;
+
     protected override string LogCategory => "Ethereum Payout Handler";
 
     #region IPayoutHandler
@@ -63,6 +65,8 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         clusterConfig = cc;
         extraPoolConfig = pc.Extra.SafeExtensionDataAs<EthereumPoolConfigExtra>();
         extraConfig = pc.PaymentProcessing.Extra.SafeExtensionDataAs<EthereumPoolPaymentProcessingConfigExtra>();
+
+        coin = poolConfig.Template.As<EthereumCoinTemplate>();
 
         logger = LogUtil.GetPoolScopedLogger(typeof(EthereumPayoutHandler), pc);
 
@@ -84,7 +88,6 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         if(!enoughPeers)
             return blocks;
 
-        var coin = poolConfig.Template.As<EthereumCoinTemplate>();
         var pageSize = 100;
         var pageCount = (int) Math.Ceiling(blocks.Length / (double) pageSize);
         var blockCache = new Dictionary<long, DaemonResponses.Block>();
@@ -99,7 +102,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                 .ToArray();
 
             // get latest block
-            var latestBlockResponse = await rpcClient.ExecuteAsync<DaemonResponses.Block>(logger, EC.GetBlockByNumber, ct, new[] { (object) "latest", true });
+            var latestBlockResponse = await rpcClient.ExecuteAsync<DaemonResponses.Block>(logger, coin.RpcMethodPrefix + EC.GetBlockByNumber, ct, new[] { (object) "latest", true });
             var latestBlockHeight = latestBlockResponse.Response.Height.Value;
 
             // execute batch
@@ -156,7 +159,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                                 BlockStatus.Pending
                             }, block.Created));
                             
-                            block.Reward = GetUncleReward(chainType, block.BlockHeight, block.BlockHeight, totalDuplicateBlockBefore);
+                            block.Reward = GetUncleReward(chainType, block.BlockHeight, block.BlockHeight, totalDuplicateBlockBefore, coin.MaxUncles);
 
                             // There is a rare case-scenario where an Uncle has a block reward of zero
                             // We must handle it carefully otherwise payout will be stuck forever
@@ -180,7 +183,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                             messageBus.NotifyBlockUnlocked(poolConfig.Id, block, coin);
                         }
                         else {
-                            var blockHashResponse = await rpcClient.ExecuteAsync<DaemonResponses.Block>(logger, EC.GetBlockByNumber, ct,
+                            var blockHashResponse = await rpcClient.ExecuteAsync<DaemonResponses.Block>(logger, coin.RpcMethodPrefix + EC.GetBlockByNumber, ct,
                                 new[] { (object) block.BlockHeight.ToStringHexWithPrefix(), true });
                             
                             var blockMiner = blockHashResponse.Response.Miner;
@@ -239,7 +242,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                     if(blockInfo2.Uncles.Length > 0)
                     {
                         // fetch all uncles in a single RPC batch request
-                        var uncleBatch = blockInfo2.Uncles.Select((x, index) => new RpcRequest(EC.GetUncleByBlockNumberAndIndex,
+                        var uncleBatch = blockInfo2.Uncles.Select((x, index) => new RpcRequest(coin.RpcMethodPrefix + EC.GetUncleByBlockNumberAndIndex,
                                 new[] { blockInfo2.Height.Value.ToStringHexWithPrefix(), index.ToStringHexWithPrefix() }))
                             .ToArray();
 
@@ -264,7 +267,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
 
                             // mature?
                             if(block.Reward == 0)
-                                block.Reward = GetUncleReward(chainType, uncle.Height.Value, blockInfo2.Height.Value, totalDuplicateBlockBefore);
+                                block.Reward = GetUncleReward(chainType, uncle.Height.Value, blockInfo2.Height.Value, totalDuplicateBlockBefore, coin.MaxUncles);
 
                             if(latestBlockHeight - uncle.Height.Value >= EthereumConstants.MinConfimations)
                             {
@@ -283,7 +286,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                                 }
                                 
                                 block.Hash = uncle.Hash;
-                                block.Reward = GetUncleReward(chainType, uncle.Height.Value, blockInfo2.Height.Value, totalDuplicateBlockBefore);
+                                block.Reward = GetUncleReward(chainType, uncle.Height.Value, blockInfo2.Height.Value, totalDuplicateBlockBefore, coin.MaxUncles);
                                 block.BlockHeight = uncle.Height.Value;
 
                                 // There is a rare case-scenario where an Uncle has a block reward of zero
@@ -380,7 +383,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         // ensure we have enough peers
         var infoResponse = await rpcClient.ExecuteAsync<string>(logger, EC.GetPeerCount, ct);
 
-        if((networkType == EthereumNetworkType.Main || extraPoolConfig?.ChainTypeOverride == "Classic" || extraPoolConfig?.ChainTypeOverride == "Mordor" || networkType == EthereumNetworkType.MainPow || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "OctaSpace" || extraPoolConfig?.ChainTypeOverride == "OctaSpaceTestnet" || extraPoolConfig?.ChainTypeOverride == "Hypra") &&
+        if((networkType == EthereumNetworkType.Main || extraPoolConfig?.ChainTypeOverride == "Classic" || extraPoolConfig?.ChainTypeOverride == "Mordor" || networkType == EthereumNetworkType.MainPow || extraPoolConfig?.ChainTypeOverride == "Ubiq" || extraPoolConfig?.ChainTypeOverride == "EtherOne" || extraPoolConfig?.ChainTypeOverride == "Pink" || extraPoolConfig?.ChainTypeOverride == "OctaSpace" || extraPoolConfig?.ChainTypeOverride == "OctaSpaceTestnet" || extraPoolConfig?.ChainTypeOverride == "Hypra" || extraPoolConfig?.ChainTypeOverride == "Cortex" || extraPoolConfig?.ChainTypeOverride == "Dolores" || extraPoolConfig?.ChainTypeOverride == "Bernard") &&
            (infoResponse.Error != null || string.IsNullOrEmpty(infoResponse.Response) ||
                infoResponse.Response.IntegralFromHex<int>() < EthereumConstants.MinPayoutPeerCount))
         {
@@ -397,7 +400,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
 
         if(cacheMisses.Any())
         {
-            var blockBatch = cacheMisses.Select(height => new RpcRequest(EC.GetBlockByNumber,
+            var blockBatch = cacheMisses.Select(height => new RpcRequest(coin.RpcMethodPrefix + EC.GetBlockByNumber,
                 new[]
                 {
                     (object) height.ToStringHexWithPrefix(),
@@ -498,7 +501,20 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                     return HypraConstants.GrayGlacierBlockReward;
 
                return HypraConstants.BaseRewardInitial;
-            
+
+            case GethChainType.Cortex:
+            case GethChainType.Bernard:
+                if(height >= CortexConstants.BaseBlockRewardPeriod)
+                    return CortexConstants.BaseRewardInitial / Math.Floor((decimal) height / CortexConstants.BaseBlockRewardPeriod);
+
+                return CortexConstants.BaseRewardInitial;
+
+            case GethChainType.Dolores:
+                if(height >= CortexConstants.DoloresBlockRewardPeriod)
+                    return CortexConstants.BaseRewardInitial / Math.Floor((decimal) height / CortexConstants.DoloresBlockRewardPeriod);
+
+                return CortexConstants.BaseRewardInitial;
+
             default:
                 throw new Exception("Unable to determine block reward: Unsupported chain type");
         }
@@ -507,7 +523,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
     private async Task<decimal> GetTxRewardAsync(DaemonResponses.Block blockInfo, CancellationToken ct)
     {
         // fetch all tx receipts in a single RPC batch request
-        var batch = blockInfo.Transactions.Select(tx => new RpcRequest(EC.GetTxReceipt, new[] { tx.Hash }))
+        var batch = blockInfo.Transactions.Select(tx => new RpcRequest(coin.RpcMethodPrefix + EC.GetTxReceipt, new[] { tx.Hash }))
             .ToArray();
 
         var results = await rpcClient.ExecuteBatchAsync(logger, ct, batch);
@@ -525,7 +541,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         return result;
     }
 
-    internal static decimal GetUncleReward(GethChainType chainType, ulong uheight, ulong height, uint totalDuplicateBlockBefore)
+    internal static decimal GetUncleReward(GethChainType chainType, ulong uheight, ulong height, uint totalDuplicateBlockBefore, int maxUncles)
     {
         var reward = GetBaseBlockReward(chainType, height);
         
@@ -569,7 +585,7 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                 break;
         }
 
-        if(totalDuplicateBlockBefore > 0)
+        if(totalDuplicateBlockBefore > maxUncles)
             reward = 0m;
 
         return reward;
@@ -616,14 +632,14 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
         
         if(extraPoolConfig?.ChainTypeOverride == "Ethereum" || extraPoolConfig?.ChainTypeOverride == "Main" || (extraPoolConfig?.ChainTypeOverride == "Ubiq") || extraPoolConfig?.ChainTypeOverride == "MainPow" || extraPoolConfig?.ChainTypeOverride == "EtherOne" )
         {
-            var maxPriorityFeePerGas = await rpcClient.ExecuteAsync<string>(logger, EC.MaxPriorityFeePerGas, ct);
+            var maxPriorityFeePerGas = await rpcClient.ExecuteAsync<string>(logger, coin.RpcMethodPrefix + EC.MaxPriorityFeePerGas, ct);
             
             logger.Debug(() => $"[{LogCategory}] MaxPriorityFeePerGas: {maxPriorityFeePerGas.Response.IntegralFromHex<ulong>()} Wei");
             
             if(extraPoolConfig?.ChainTypeOverride == "Ubiq")
             {
                 // get latest block
-                var latestBlockResponse = await rpcClient.ExecuteAsync<DaemonResponses.Block>(logger, EC.GetBlockByNumber, ct, new[] { (object) "latest", true });
+                var latestBlockResponse = await rpcClient.ExecuteAsync<DaemonResponses.Block>(logger, coin.RpcMethodPrefix + EC.GetBlockByNumber, ct, new[] { (object) "latest", true });
                 var latestBlockHeight = latestBlockResponse.Response.Height.Value;
 
                 // EIP-1559 Transaction
@@ -659,17 +675,17 @@ public class EthereumPayoutHandler : PayoutHandlerBase,
                 Value = amount.ToString("x").TrimStart('0'),
                 Gas = extraConfig.Gas
             };
-            response = await rpcClient.ExecuteAsync<string>(logger, EC.SendTx, ct, new[] { requestPink });
+            response = await rpcClient.ExecuteAsync<string>(logger, coin.RpcMethodPrefix + EC.SendTx, ct, new[] { requestPink });
         }  
         else {
-            response = await rpcClient.ExecuteAsync<string>(logger, EC.SendTx, ct, new[] { request });
+            response = await rpcClient.ExecuteAsync<string>(logger, coin.RpcMethodPrefix + EC.SendTx, ct, new[] { request });
         }
 
         if(response.Error != null)
-            throw new Exception($"{EC.SendTx} returned error: {response.Error.Message} code {response.Error.Code}");
+            throw new Exception($"{coin.RpcMethodPrefix}{EC.SendTx} returned error: {response.Error.Message} code {response.Error.Code}");
         
         if(string.IsNullOrEmpty(response.Response) || EthereumConstants.ZeroHashPattern.IsMatch(response.Response))
-            throw new Exception($"{EC.SendTx} did not return a valid transaction hash");
+            throw new Exception($"{coin.RpcMethodPrefix}{EC.SendTx} did not return a valid transaction hash");
         
         var txHash = response.Response;
         logger.Info(() => $"[{LogCategory}] Payment transaction id: {txHash}");

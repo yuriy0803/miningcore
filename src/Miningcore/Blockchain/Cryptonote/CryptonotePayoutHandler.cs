@@ -642,9 +642,11 @@ public class CryptonotePayoutHandler : PayoutHandlerBase,
                 await PayoutBatch(simpleBalances);
 #else
         {
-            var maxBatchSize = 15;  // going over 15 yields "sv/gamma are too large"
+            var maxBatchSize = extraConfig?.MaximumDestinationPerTransfer ?? 15;  // going over 15 yields "sv/gamma are too large"
             var pageSize = maxBatchSize;
             var pageCount = (int) Math.Ceiling((double) simpleBalances.Length / pageSize);
+
+            logger.Info(() => $"[{LogCategory}] Maximum of simultaneous destination address in a single transaction: {maxBatchSize}");
 
             for(var i = 0; i < pageCount; i++)
             {

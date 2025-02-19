@@ -75,6 +75,7 @@
                 "percentage": 1
             }
         ],
+        "enableAsicBoost": true,
         "blockRefreshInterval": 250,
         "jobRebroadcastTimeout": 0,
         "clientConnectionTimeout": 600,
